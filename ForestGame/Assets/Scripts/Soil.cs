@@ -1,3 +1,4 @@
+using UnityEditor.UI;
 using UnityEngine;
 
 public class Soil : MonoBehaviour
@@ -6,6 +7,9 @@ public class Soil : MonoBehaviour
     private Tree tree;
     public GameObject treePrefab;
     public event System.Action<SoilType> OnSoilChanged;
+    public int x;
+    public int y;
+    public Grid grid;
 
     public bool HasTree => tree != null;
 
@@ -18,15 +22,28 @@ public class Soil : MonoBehaviour
 
         tree = treeObj.GetComponent<Tree>();
         tree.Initialize(this, treeData);
+
     }
 
     void OnMouseDown()
     {
-        PlantManager.Instance.TryPlant(this);
+        InteractionManager.Instance.Interact(this);
     }
+
     public void ChangeSoil(SoilType newType)
     {
         type = newType;
         OnSoilChanged?.Invoke(type);
+    }
+    public bool RemoveTree()
+    {
+        if (!HasTree) return false;
+
+        bool shouldReturnSeed = tree.justPlanted;
+
+        Destroy(tree.gameObject);
+        tree = null;
+
+        return shouldReturnSeed;
     }
 }

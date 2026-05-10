@@ -9,35 +9,66 @@ public class Grid
     private int width;
     private int height;
     private float cellSize = 1f;
-    private int[,] gridArray;
-    private Vector3 originPos;
     private Soil[,] gridObjects;
 
-    public Grid(int width, int height, GameObject myPrefab, Vector3 originPos)
+    public Grid(int width, int height, GameObject cellPrefab)
     {
         this.width = width;
         this.height = height;
-        this.originPos = originPos;
 
-        gridArray = new int[width, height];
         gridObjects = new Soil[width, height];
 
-        for (int x = 0; x < gridArray.GetLength(0); x++)
+        for (int x = 0; x < gridObjects.GetLength(0); x++)
         {
-            for (int y = 0; y < gridArray.GetLength(1); y++)
+            for (int y = 0; y < gridObjects.GetLength(1); y++)
             {
                 Vector3 spawnPosition = GetWorldPosition(x, y) + new Vector3(cellSize, cellSize) * 0.5f;
 
-                GameObject obj = Object.Instantiate(myPrefab, spawnPosition, Quaternion.identity);
+                GameObject obj = Object.Instantiate(cellPrefab, spawnPosition, Quaternion.identity);
 
                 obj.transform.localScale = new Vector3(1f, 1f, 1f);
 
-                gridObjects[x, y] = obj.GetComponent<Soil>();
+                Soil soil = obj.GetComponent<Soil>();
+                soil.x = x;
+                soil.y = y;
+                soil.grid = this;
+                gridObjects[x, y] = soil;
 
             }
         }
     }
 
+    public Soil[] Adjacent(Soil soil)
+    {
+        List<Soil> neighbors = new List<Soil>();
+
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                if (dx == 0 && dy == 0) continue;
+
+                int nx = soil.x + dx;
+                int ny = soil.y + dy;
+
+                if (nx >= 0 && ny >= 0 &&
+                    nx < width && ny < height)
+                {
+                    neighbors.Add(gridObjects[nx, ny]);
+                }
+            }
+        }
+
+        return neighbors.ToArray();
+    }
+
+    public Vector3 GetSnappedPosition(Vector3 worldPos)
+    {
+        int x = Mathf.FloorToInt(worldPos.x / cellSize);
+        int y = Mathf.FloorToInt(worldPos.y / cellSize);
+
+        return GetWorldPosition(x, y) + new Vector3(cellSize, cellSize) * 0.5f;
+    }
     public void SetValue(int x, int y, TreeData treeData)
     {
         if (x >= 0 && y >= 0 && x < width && y < height)
@@ -53,33 +84,33 @@ public class Grid
         SetValue(x, y, treeData);
     }
 
-    public int GetValue(int x, int y)
+    public Soil GetValue(int x, int y)
     {
         if (x >= 0 && y >= 0 && x < width && y < height)
         {
-            return gridArray[x, y];
+            return gridObjects[x, y];
         }
         else
         {
-            return 0;
+            return null;
         }
     }
 
-    public int GetValue(Vector3 worldPos)
+    public Soil GetValue(Vector3 worldPos)
     {
         int x, y;
         GetXY(worldPos, out x, out y);
         return GetValue(x, y);
     }
 
-    private void GetXY(Vector3 worldPos, out int x, out int y)
+    public void GetXY(Vector3 worldPos, out int x, out int y)
     {
-        x = Mathf.FloorToInt((worldPos - originPos).x / cellSize);
-        y = Mathf.FloorToInt((worldPos - originPos).y / cellSize);
+        x = Mathf.RoundToInt(worldPos.x / cellSize - 0.5f);
+        y = Mathf.RoundToInt(worldPos.y / cellSize - 0.5f);
     }
     private Vector3 GetWorldPosition(int x, int y)
     {
-        return new Vector3(x, y) * cellSize + originPos;
+        return new Vector3(x, y) * cellSize;
     }
 
 }

@@ -6,6 +6,6 @@ public class TreeButton : MonoBehaviour
 
     public void OnClick()
     {
-        PlantManager.Instance.SelectTree(treeData);
+        InteractionManager.Instance.SelectPlantTool(treeData);
     }
 }

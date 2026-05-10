@@ -13,7 +13,12 @@ MonoBehaviour:
   m_Name: Beech
   m_EditorClassIdentifier: Assembly-CSharp::TreeData
   treeName: Beech
-  growthSpeed: 1
+  growthSpeed: 0.05
+  growthTime: 0
   preferredSoil: 0
   growthStages:
-  - {fileID: -480233426208169229, guid: 9e17453111a325c48a1cf9c5f89fdb3c, type: 3}
+  - {fileID: -7866928900747384746, guid: f992356a7c3ae4441a8661be585c820d, type: 3}
+  - {fileID: 1049951345218963250, guid: 6b50bbfa52df23042a76a3446531479e, type: 3}
+  - {fileID: -6725364697872350945, guid: 0e21264bfba47504a8d9dce7afe64a3d, type: 3}
+  - {fileID: 3374443492991038147, guid: 40752255fdd35044e8af1d98d9e37584, type: 3}
+  previewSprite: {fileID: 3374443492991038147, guid: 40752255fdd35044e8af1d98d9e37584, type: 3}
