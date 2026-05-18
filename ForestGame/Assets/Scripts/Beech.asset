@@ -13,9 +13,23 @@ MonoBehaviour:
   m_Name: Beech
   m_EditorClassIdentifier: Assembly-CSharp::TreeData
   treeName: Beech
-  growthSpeed: 0.05
-  growthTime: 0
+  spreadChance: 0.15
+  oldAgeStartYears: 150
+  maxAgeYears: 300
+  minMaturityAgeYears: 40
+  maxMaturityAgeYears: 50
+  seedlingAge: 1
+  saplingAge: 5
+  youngTreeAge: 20
   preferredSoil: 0
+  droughtResistance: 0.2
+  shadeTolerance: 0.9
+  biodiversityValue: 1
+  moistureUsage: 0.5
+  minimumMoisture: 0.4
+  improvesSoil: 1
+  fireResistant: 0
+  diseaseResistant: 0
   growthStages:
   - {fileID: -7866928900747384746, guid: f992356a7c3ae4441a8661be585c820d, type: 3}
   - {fileID: 1049951345218963250, guid: 6b50bbfa52df23042a76a3446531479e, type: 3}

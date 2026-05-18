@@ -1,18 +1,30 @@
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
-public class Tree : MonoBehaviour
+public class Tree : TileObject
 {
 
-    private Soil soil;
     public TreeData data;
     private SpriteRenderer spriteRenderer;
-    private float growthSpeed;
-    private float growthFactor;
+
     public float currGrowth;
     public bool justPlanted;
-    public bool mature = false;
-    private bool spreadingStarted = false;
+
+    public float health = 1f;
+    public bool dead = false;
+
+    public int ageMonths = 0;
+    public float growthProgress = 0f;
+    private TreeStage currentStage;
+    private float requiredGrowthForMaturity;
+
+    [Range(0f, 1f)]
+    public float stress = 0f; // 0 = no stress, 1 = maximum stress
+    private const float stressHealthThreshold = 0.4f;
+
+    public int AgeYears => ageMonths / 12;
+    public bool isMature => currentStage == TreeStage.Mature;
 
     private void Awake()
     {
@@ -21,65 +33,172 @@ public class Tree : MonoBehaviour
 
     public void Initialize(Soil soil, TreeData data)
     {
-        this.soil = soil;
+        base.Initialize(soil);
+
         this.data = data;
-        growthSpeed = data.growthSpeed;
 
         spriteRenderer.sprite = data.growthStages[0];
 
         soil.OnSoilChanged += HandleSoilChanged;
 
-        ApplySoilEffect(soil.type);
-
         justPlanted = true;
+        currentStage = TreeStage.Seed;
+
+        requiredGrowthForMaturity = CalculateMinGrowth();
+
+        TimeManager.Instance.OnDayPassed += DailyUpdate;
+        TimeManager.Instance.OnMonthPassed += MonthlyUpdate;
     }
+    private void DailyUpdate()
+    {
+        ConsumeMoisture();
+        CalculateStress();
+        UpdateHealth();
+    }
+
+    private void ConsumeMoisture()
+    {
+        soil.moisture -= data.moistureUsage * 0.001f;
+
+        soil.moisture = Mathf.Clamp01(soil.moisture);
+    }
+
+    private void MonthlyUpdate()
+    {
+        ageMonths++;
+
+        Grow();
+
+        UpdateGrowthStage();
+
+        CheckNaturalDeath();
+
+        if (currentStage == TreeStage.Mature)
+            PlantToAdjacent();
+    }
+
+    private float CalculateMinGrowth()
+    {
+        float avgSeasonalMultiplier = (1.4f + 1.1f + 0.7f + 0.15f) / 4f;
+
+        float perfectGrowthRate = 1f
+            * avgSeasonalMultiplier   // average season
+            * 1.15f                   // preferred soil
+            * 1f;                     // full health, no stress
+
+        int monthsToMaturity = data.minMaturityAgeYears * 12;
+
+        return perfectGrowthRate * monthsToMaturity;
+    }
+
     private void HandleSoilChanged(SoilType newType)
     {
-        ApplySoilEffect(newType);
+        
     }
 
-    private void ApplySoilEffect(SoilType type)
+    private void Grow()
     {
-        switch (type)
+        if (currentStage == TreeStage.Mature) return;
+        if (dead) return;
+
+        float growthRate = 1f;
+
+        switch (TimeManager.Instance.CurrentSeason)
         {
-            case SoilType.Normal:
-                growthFactor = 1;
-                break;
-            case SoilType.Fertile:
-                growthFactor = 1.2f;
-                break;
+            case Season.Spring: growthRate *= 1.4f; break;
+            case Season.Summer: growthRate *= 1.1f; break;
+            case Season.Autumn: growthRate *= 0.7f; break;
+            case Season.Winter: growthRate *= 0.15f; break;
         }
+
+        if (AgeYears > data.oldAgeStartYears)
+        {
+            growthRate *= 0.7f;
+        }
+
+        growthRate *= (1f - stress);
+
+        growthProgress += growthRate;
     }
 
-    // Update is called once per frame
-
-    void Update()
+    private void UpdateGrowthStage()
     {
-        currGrowth += (growthSpeed * growthFactor) * Time.deltaTime;
 
-        if (currGrowth >= 1)
+        if (currentStage == TreeStage.Mature) return;
+
+        TreeStage previousStage = currentStage;
+
+        int age = AgeYears;
+
+        bool mature =
+            (
+            growthProgress >= requiredGrowthForMaturity
+            &&
+            AgeYears >= data.minMaturityAgeYears
+            );
+
+        if (mature)
         {
-            spriteRenderer.sprite = data.growthStages[3];
-            mature = true;
+            currentStage = TreeStage.Mature;
         }
-        else if (currGrowth >= 0.5f)
-            spriteRenderer.sprite = data.growthStages[2];
-        else if (currGrowth >= 0.25f)
+        else if (age >= data.saplingAge)
         {
-            spriteRenderer.sprite = data.growthStages[1];
-            justPlanted = false;
+            currentStage = TreeStage.Young;
+        }
+        else if (age >= data.seedlingAge)
+        {
+            currentStage = TreeStage.Sapling;
+        }
+        else
+        {
+            currentStage = TreeStage.Seed;
         }
 
-        if (mature && !spreadingStarted)
+        spriteRenderer.sprite = data.growthStages[(int)currentStage];
+
+        bool gainedShade =
+            (previousStage == TreeStage.Sapling && currentStage == TreeStage.Young)
+            ||
+            (previousStage == TreeStage.Young && currentStage == TreeStage.Mature);
+
+        if (gainedShade)
         {
-            spreadingStarted = true;
-            InvokeRepeating(nameof(PlantToAdjacent), 2f, 10f);
+            soil.grid.RefreshNeighbors(soil);
+        }
+
+    }
+
+    private void CheckNaturalDeath()
+    {
+        int age = AgeYears;
+
+        if (age >= data.maxAgeYears)
+        {
+            Die();
+            return;
+        }
+
+        if (age >= data.oldAgeStartYears)
+        {
+            float ageRange =
+                data.maxAgeYears - data.oldAgeStartYears;
+
+            float currentAge =
+                age - data.oldAgeStartYears;
+
+            float deathChance =
+                currentAge / ageRange;
+
+            if (Random.value < deathChance * 0.01f)
+            {
+                Die();
+            }
         }
     }
 
     public void PlantToAdjacent() {
 
-        if (Random.value >= 0.5) return;
+        if (Random.value >= data.spreadChance) return;
 
         Soil[] neighbors = soil.grid.Adjacent(soil);
 
@@ -87,7 +206,7 @@ public class Tree : MonoBehaviour
 
         foreach (Soil s in neighbors)
         {
-            if (!s.HasTree)
+            if (!s.HasObject)
             {
                 validSoils.Add(s);
             }
@@ -98,5 +217,85 @@ public class Tree : MonoBehaviour
         Soil chosen = validSoils[Random.Range(0, validSoils.Count)];
 
         chosen.PlantTree(data);
+    }
+
+    private void CalculateStress()
+    {
+        float targetStress = 0f;
+
+        if (soil.moisture < data.minimumMoisture)
+        {
+            float moistureStress = 1f - (soil.moisture / data.minimumMoisture);
+            targetStress += Mathf.Clamp01(moistureStress * (1f - data.droughtResistance));
+        }
+
+        if (soil.shade > data.shadeTolerance)
+        {
+            targetStress += Mathf.Clamp01(soil.shade - data.shadeTolerance);
+        }
+
+        if (soil.type != data.preferredSoil)
+        {
+            targetStress += 0.15f;
+        }
+
+        targetStress = Mathf.Clamp01(targetStress);
+
+        float driftRate = targetStress > stress ? 0.06f : 0.02f;
+        stress = Mathf.MoveTowards(stress, targetStress, driftRate);
+    }
+
+    private void UpdateHealth()
+    {
+        if (dead) return;
+
+        float healthChange = 0f;
+
+        if (stress > stressHealthThreshold)
+        {
+            // Damage scales with how far above the threshold stress is
+            float stressOverflow = stress - stressHealthThreshold;
+            healthChange -= stressOverflow * 0.01f;
+        }
+        else
+        {
+            // Below threshold: recover, faster the closer to ideal (stress == 0)
+            float recoveryRate = Mathf.Lerp(0.003f, 0.001f, stress / stressHealthThreshold);
+            healthChange += recoveryRate;
+        }
+
+        health = Mathf.Clamp01(health + healthChange);
+
+        if (health <= 0f)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        dead = true;
+
+        CancelInvoke();
+
+        soil.RemoveObject();
+
+        Destroy(gameObject);
+
+        //TODO: Spawn dead tree
+    }
+
+    private void OnDestroy()
+    {
+        if (TimeManager.Instance != null)
+        {
+            TimeManager.Instance.OnDayPassed -= DailyUpdate;
+            TimeManager.Instance.OnMonthPassed -= MonthlyUpdate;
+        }
+
+        if (soil != null)
+        {
+            soil.OnSoilChanged -= HandleSoilChanged;
+        }
     }
 }

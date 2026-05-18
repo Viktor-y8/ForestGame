@@ -6,7 +6,8 @@ public enum ToolType
     Plant,
     RemoveTree,
     Fertilize,
-    ReplaceSoil
+    ReplaceSoil,
+    Water
 }
 
 public class InteractionManager : MonoBehaviour
@@ -23,6 +24,9 @@ public class InteractionManager : MonoBehaviour
 
     public int seedCount;
 
+    public int waterBudget = 10;
+    private const float waterAmount = 0.3f;
+
     private void Awake()
     {
         Instance = this;
@@ -30,6 +34,12 @@ public class InteractionManager : MonoBehaviour
         previewRenderer.color = new Color(1, 1, 1, 0.75f);
         cursorPreview.SetActive(false);
         currTool = ToolType.None;
+    }
+
+    private void Start()
+    {
+
+        TimeManager.Instance.OnMonthPassed += RefillWaterBudget;
     }
 
     private void Update()
@@ -53,7 +63,7 @@ public class InteractionManager : MonoBehaviour
             {
                 cursorPreview.transform.position = snapped;
                 cursorPreview.SetActive(true);
-                if (soil.HasTree)
+                if (soil.HasObject)
                     previewRenderer.color = new Color(1, 0, 0, 0.75f);
                 else
                     previewRenderer.color = new Color(1, 1, 1, 0.75f);
@@ -66,6 +76,7 @@ public class InteractionManager : MonoBehaviour
             selectedTree = null;
             cursorPreview.SetActive(false);
             currTool = ToolType.None;
+            InfoPanelUI.Instance.Hide();
         }
     }
 
@@ -91,6 +102,10 @@ public class InteractionManager : MonoBehaviour
     {
         switch (currTool)
         {
+            case ToolType.None:
+                InfoPanelUI.Instance.Show(soil);
+                break;
+
             case ToolType.Plant:
                 if (selectedTree != null)
                     TryPlant(soil);
@@ -105,7 +120,12 @@ public class InteractionManager : MonoBehaviour
                 break;
 
             case ToolType.ReplaceSoil:
-                soil.ChangeSoil(SoilType.Normal);
+                soil.ChangeSoil(SoilType.Rocky);
+                break;
+
+
+            case ToolType.Water:
+                TryWater(soil);
                 break;
         }
     }
@@ -128,18 +148,38 @@ public class InteractionManager : MonoBehaviour
     public void TryPlant(Soil soil)
     {
 
-        if (selectedTree == null || soil.HasTree || seedCount <= 0) return;
+        if (selectedTree == null || soil.HasObject || seedCount <= 0) return;
 
         soil.PlantTree(selectedTree);
         seedCount--;
     }
 
+    public void TryWater(Soil soil)
+    {
+        if (waterBudget <= 0) return;
+
+        soil.Water(waterAmount);
+        waterBudget--;
+    }
+
+    private void RefillWaterBudget()
+    {
+        int refill = WeatherManager.Instance.currentWeather == WeatherType.Rain ? 8 : 4;
+        waterBudget = Mathf.Min(waterBudget + refill, 20);
+    }
+
     public void TryRemove(Soil soil)
     {
 
-        if (!soil.HasTree) return;
+        if (!soil.HasObject) return;
 
-        if(soil.RemoveTree()) seedCount++;
+        if(soil.RemoveObject()) seedCount++;
     }
 
+
+    private void OnDestroy()
+    {
+        if (TimeManager.Instance != null)
+            TimeManager.Instance.OnMonthPassed -= RefillWaterBudget;
+    }
 }

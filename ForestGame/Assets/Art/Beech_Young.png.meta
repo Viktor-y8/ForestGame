@@ -103,12 +103,12 @@ TextureImporter:
       name: Beech_Young_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 1
         y: 0
-        width: 24
-        height: 27
+        width: 23
+        height: 28
       alignment: 9
-      pivot: {x: 0.5, y: 0.08}
+      pivot: {x: 0.47826087, y: 0.14285715}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -125,8 +125,8 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 32dd4b1e54280a5479f06985c1dfabbb
-    internalID: 0
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 1537655665
     vertices: []
     indices: 
     edges: []

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f992356a7c3ae4441a8661be585c820d
+guid: 28a4c1fb500801f4a8aaef31abd3b5f8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7866928900747384746
-    second: Seed_0
+      213: 5491473925631665107
+    second: Maple_Sapling_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Seed_0
+      name: Maple_Sapling_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 12
-        height: 9
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        width: 19
+        height: 33
+      alignment: 9
+      pivot: {x: 0.47368422, y: 0.09090909}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 658a2b578dd03d290800000000000000
-      internalID: -7866928900747384746
+      spriteID: 3d36896b072a53c40800000000000000
+      internalID: 5491473925631665107
       vertices: []
       indices: 
       edges: []
@@ -126,7 +126,7 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 0
+    internalID: 1537655665
     vertices: []
     indices: 
     edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Seed_0: -7866928900747384746
+      Maple_Sapling_0: 5491473925631665107
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

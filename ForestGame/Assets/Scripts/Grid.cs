@@ -62,6 +62,21 @@ public class Grid
         return neighbors.ToArray();
     }
 
+    public void RefreshNeighbors(Soil center)
+    {
+        center.RefreshLocalEnvironment();
+
+        Soil[] neighbors = Adjacent(center);
+
+        foreach (Soil s in neighbors)
+        {
+            if (s != null)
+            {
+                s.RefreshLocalEnvironment();
+            }
+        }
+    }
+
     public Vector3 GetSnappedPosition(Vector3 worldPos)
     {
         int x = Mathf.FloorToInt(worldPos.x / cellSize);
