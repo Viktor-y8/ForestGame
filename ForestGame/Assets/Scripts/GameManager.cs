@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
         Camera.main.transform.position = new Vector3(gridWidth  / 2f, gridHeight / 2f, -10);
 
         InteractionManager.Instance.SetGrid(grid);
+        FireManager.Instance.SetGrid(grid);
 
     }
 

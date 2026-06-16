@@ -85,7 +85,8 @@ public class InfoPanelUI : MonoBehaviour
             $"Soil Type: {currentSoil.type}\n" +
             $"Moisture: {(currentSoil.moisture * 100f):0}%\n" +
             $"Fertility: {(currentSoil.fertility * 100f):0}%\n" +
-            $"Shade: {(currentSoil.shade * 100f):0}%";
+            $"Shade: {(currentSoil.shade * 100f):0}%\n" +
+            $"OnFire: {currentSoil.isOnFire}";
 
         Tree tree = currentSoil.CurrentObject is Tree treeObj ? treeObj : null;
 

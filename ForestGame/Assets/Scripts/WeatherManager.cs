@@ -53,7 +53,10 @@ public class WeatherManager : MonoBehaviour
         else if (r < chanceDrought + chanceHeatwave)
             currentWeather = WeatherType.Heatwave;
         else if (r < chanceDrought + chanceHeatwave + chanceRain)
+        { 
             currentWeather = WeatherType.Rain;
+            FireManager.Instance.OnRain();
+        }
         else
             currentWeather = WeatherType.Normal;
     }

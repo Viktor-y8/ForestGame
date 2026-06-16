@@ -8,7 +8,8 @@ public class Soil : MonoBehaviour
     
     private TileObject currentObject;
     public GameObject treePrefab;
-    
+    public GameObject ditchPrefab;
+
     public event System.Action<SoilType> OnSoilChanged;
     
     public int x;
@@ -25,6 +26,18 @@ public class Soil : MonoBehaviour
     [Range(0f, 1f)]
     public float shade = 0f;
 
+    public bool isOnFire = false;
+    [Range(0f, 1f)]
+    public float burnProgress = 0f;               // 0–1, tree dies at 1
+    private const float burnRate = 0.12f;
+    private bool recentlyOnFire = false;
+    private int recentlyOnFireCounter = 0;
+
+    public void RecentFireCountUp() 
+    { 
+        if(recentlyOnFire) recentlyOnFireCounter++;
+        if(recentlyOnFireCounter >= 30) recentlyOnFire = false;
+    }
     public bool HasObject => currentObject != null;
 
     public TileObject CurrentObject => currentObject;
@@ -32,6 +45,7 @@ public class Soil : MonoBehaviour
     private void Start()
     {
         TimeManager.Instance.OnDayPassed += UpdateMoisture;
+        TimeManager.Instance.OnDayPassed += RecentFireCountUp;
     }
 
     private void UpdateMoisture()
@@ -137,6 +151,16 @@ public class Soil : MonoBehaviour
 
         grid.RefreshNeighbors(this);
     }
+    
+    public void PlantDitch()
+    {
+        if (HasObject) return;
+
+        GameObject obj = Instantiate(ditchPrefab, transform.position, Quaternion.identity);
+        Ditch ditch = obj.GetComponent<Ditch>();
+        ditch.Initialize(this);
+        currentObject = ditch;
+    }
 
     void OnMouseDown()
     {
@@ -166,6 +190,48 @@ public class Soil : MonoBehaviour
         grid.RefreshNeighbors(this);
 
         return shouldReturnSeed;
+    }
+
+    public void Ignite()
+    {
+        if (isOnFire || moisture > 0.6f || recentlyOnFire) return;  // wet soil won't ignite
+        if (CurrentObject is Ditch) return;
+
+        isOnFire = true;
+        burnProgress = 0f;
+    }
+
+    public void Extinguish()
+    {
+        isOnFire = false;
+        burnProgress = 0f;
+    }
+
+    public void UpdateFire()
+    {
+        if(moisture >= 0.8) Extinguish();
+
+        if (!isOnFire) return;
+
+        // Dry soil and high shade (dense canopy) burn faster
+        float rate = burnRate;
+        rate *= (1f - moisture);
+        rate *= (1f + shade * 0.5f);
+
+        if (!HasObject) rate *= 1.2f;
+
+        burnProgress += rate;
+
+        if (burnProgress >= 1f)
+        {
+            if (HasObject) RemoveObject();
+            Extinguish();
+            recentlyOnFire = true;
+            recentlyOnFireCounter = 0;
+
+            // Burnt soil loses moisture retention temporarily
+            //moistureRetention = Mathf.Max(0.3f, moistureRetention - 0.2f);
+        }
     }
 
     private void OnDestroy()

@@ -155,6 +155,7 @@ public class Tree : TileObject
         }
 
         spriteRenderer.sprite = data.growthStages[(int)currentStage];
+        GetComponent<TreeOverlay>()?.RefreshSkullPosition();
 
         bool gainedShade =
             (previousStage == TreeStage.Sapling && currentStage == TreeStage.Young)

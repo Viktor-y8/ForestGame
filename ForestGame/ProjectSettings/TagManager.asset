@@ -47,6 +47,9 @@ TagManager:
   - name: Objects
     uniqueID: 3977600925
     locked: 0
+  - name: Fire
+    uniqueID: 715442765
+    locked: 0
   m_RenderingLayers:
   - Default
   m_MigratedRenderPipelines: []

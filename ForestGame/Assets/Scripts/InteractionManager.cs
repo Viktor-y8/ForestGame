@@ -7,7 +7,8 @@ public enum ToolType
     RemoveTree,
     Fertilize,
     ReplaceSoil,
-    Water
+    Water,
+    Ditch
 }
 
 public class InteractionManager : MonoBehaviour
@@ -27,6 +28,8 @@ public class InteractionManager : MonoBehaviour
     public int waterBudget = 10;
     private const float waterAmount = 0.3f;
 
+    public int ditchBudget = 5;
+
     private void Awake()
     {
         Instance = this;
@@ -39,7 +42,7 @@ public class InteractionManager : MonoBehaviour
     private void Start()
     {
 
-        TimeManager.Instance.OnMonthPassed += RefillWaterBudget;
+        TimeManager.Instance.OnMonthPassed += RefillToolBudget;
     }
 
     private void Update()
@@ -125,7 +128,12 @@ public class InteractionManager : MonoBehaviour
 
 
             case ToolType.Water:
-                TryWater(soil);
+                FireManager.Instance.StartFire(soil);
+                //TryWater(soil);
+                break;
+
+            case ToolType.Ditch:
+                TryDigDitch(soil);
                 break;
         }
     }
@@ -162,10 +170,24 @@ public class InteractionManager : MonoBehaviour
         waterBudget--;
     }
 
-    private void RefillWaterBudget()
+    public void TryDigDitch(Soil soil)
+    {
+        if (ditchBudget <= 0) return;
+        if (soil.isOnFire) return;
+        if (soil.CurrentObject is Ditch) return;    // already a ditch
+
+        if (soil.RemoveObject()) seedCount++;
+
+        soil.PlantDitch();
+        ditchBudget--;
+    }
+
+    private void RefillToolBudget()
     {
         int refill = WeatherManager.Instance.currentWeather == WeatherType.Rain ? 8 : 4;
         waterBudget = Mathf.Min(waterBudget + refill, 20);
+
+        ditchBudget += Mathf.Min(ditchBudget + 5, 25);
     }
 
     public void TryRemove(Soil soil)
@@ -180,6 +202,6 @@ public class InteractionManager : MonoBehaviour
     private void OnDestroy()
     {
         if (TimeManager.Instance != null)
-            TimeManager.Instance.OnMonthPassed -= RefillWaterBudget;
+            TimeManager.Instance.OnMonthPassed -= RefillToolBudget;
     }
 }
