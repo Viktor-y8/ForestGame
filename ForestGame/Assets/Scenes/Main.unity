@@ -129,7 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 20647088}
   - component: {fileID: 20647087}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: CursorPreview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -181,8 +181,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: -317366371
-  m_SortingLayer: 2
+  m_SortingLayerID: 586893771
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
@@ -221,6 +221,7 @@ GameObject:
   - component: {fileID: 97083880}
   - component: {fileID: 97083883}
   - component: {fileID: 97083882}
+  - component: {fileID: 97083884}
   - component: {fileID: 97083881}
   m_Layer: 5
   m_Name: TimeButton
@@ -331,6 +332,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 97083879}
   m_CullTransparentMesh: 1
+--- !u!114 &97083884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 97083879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3d55e5dd3f2f70499efa8cc42428b0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToolButton
+  tool: 0
+  toolName: Time speed-up
+  toolDescription: Speeds up the in-game time.
+  buttonContainer: {fileID: 0}
+  useOwnPosition: 1
 --- !u!1 &175971964
 GameObject:
   m_ObjectHideFlags: 0
@@ -961,6 +979,7 @@ MonoBehaviour:
   toolDescription: It lets you water trees and soils, increasing their moisture level
     or stopping fires
   buttonContainer: {fileID: 1019133895}
+  useOwnPosition: 0
 --- !u!1 &367952301
 GameObject:
   m_ObjectHideFlags: 0
@@ -1214,8 +1233,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1407, y: 384}
-  m_SizeDelta: {x: -1585.3279, y: -471.57568}
+  m_AnchoredPosition: {x: -1338.6746, y: 405.2898}
+  m_SizeDelta: {x: -1448.677, y: -514.1553}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &405329610
 MonoBehaviour:
@@ -1237,7 +1256,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 6190947248868182727, guid: daf4d7c6cfd73d04696ea94ae1e276b9, type: 3}
+  m_Sprite: {fileID: 4869563128659536901, guid: 5946a0ab5e87a1e41adc078511dd9201, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1953,6 +1972,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   boundary: 50
   speed: 5
+  buttonImage: {fileID: 1727449593}
+  camOnSprite: {fileID: 7472177053155476146, guid: 0ce9ee633c12daf4299db78173646c5d, type: 3}
+  camOffSprite: {fileID: 470298078503609940, guid: 0920a080d6be2c341b22afbc0f7b5b1a, type: 3}
 --- !u!1 &590185024
 GameObject:
   m_ObjectHideFlags: 0
@@ -2692,6 +2714,7 @@ RectTransform:
   - {fileID: 836488881}
   - {fileID: 97083880}
   - {fileID: 2111908994}
+  - {fileID: 1727449591}
   - {fileID: 279119045}
   - {fileID: 1019133895}
   m_Father: {fileID: 0}
@@ -3027,6 +3050,7 @@ MonoBehaviour:
   toolName: Remove
   toolDescription: It lets you remove trees and ditches
   buttonContainer: {fileID: 1019133895}
+  useOwnPosition: 0
 --- !u!1 &1396329004
 GameObject:
   m_ObjectHideFlags: 0
@@ -4087,7 +4111,7 @@ MonoBehaviour:
   m_charWidthMaxAdj: 0
   m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 1
+  m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
@@ -4260,6 +4284,157 @@ RectTransform:
   m_AnchoredPosition: {x: 0.000061035, y: 9}
   m_SizeDelta: {x: 234.33, y: 218.03}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1727449590
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1727449591}
+  - component: {fileID: 1727449594}
+  - component: {fileID: 1727449593}
+  - component: {fileID: 1727449595}
+  - component: {fileID: 1727449592}
+  m_Layer: 5
+  m_Name: CameraLock
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1727449591
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1727449590}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 955446274}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -828, y: -427}
+  m_SizeDelta: {x: 134, y: 134}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1727449592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1727449590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1727449593}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 519420034}
+        m_TargetAssemblyTypeName: CameraController, Assembly-CSharp
+        m_MethodName: setMoveCam
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1727449593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1727449590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 7472177053155476146, guid: 0ce9ee633c12daf4299db78173646c5d, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1727449594
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1727449590}
+  m_CullTransparentMesh: 1
+--- !u!114 &1727449595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1727449590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3d55e5dd3f2f70499efa8cc42428b0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ToolButton
+  tool: 0
+  toolName: Camera Lock
+  toolDescription: Locks your camera if you dont want to move it. You can also lock
+    your camera by pressing Q.
+  buttonContainer: {fileID: 0}
+  useOwnPosition: 1
 --- !u!1 &1775001404
 GameObject:
   m_ObjectHideFlags: 0
@@ -4383,7 +4558,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -10.340698, y: 0, z: -10.340454, w: 0}
+  m_margin: {x: -10.340698, y: -16.937866, z: -10.340454, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -4623,6 +4798,7 @@ GameObject:
   - component: {fileID: 1815651183}
   - component: {fileID: 1815651186}
   - component: {fileID: 1815651187}
+  - component: {fileID: 1815651188}
   m_Layer: 5
   m_Name: TreePanel
   m_TagString: Untagged
@@ -4648,8 +4824,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -145, y: 9.574585}
-  m_SizeDelta: {x: -1221.907, y: 0}
+  m_AnchoredPosition: {x: -111.180786, y: -2.7213135}
+  m_SizeDelta: {x: -1154.2686, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1815651183
 MonoBehaviour:
@@ -4671,7 +4847,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 6190947248868182727, guid: daf4d7c6cfd73d04696ea94ae1e276b9, type: 3}
+  m_Sprite: {fileID: 4869563128659536901, guid: 5946a0ab5e87a1e41adc078511dd9201, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4734,19 +4910,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.VerticalLayoutGroup
   m_Padding:
-    m_Left: 12
-    m_Right: 12
-    m_Top: 12
-    m_Bottom: 12
-  m_ChildAlignment: 4
-  m_Spacing: 8
-  m_ChildForceExpandWidth: 1
+    m_Left: 44
+    m_Right: 44
+    m_Top: 48
+    m_Bottom: 24
+  m_ChildAlignment: 1
+  m_Spacing: 12
+  m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &1815651188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1815651181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: 294
+  m_MinHeight: 0
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &1876757935
 GameObject:
   m_ObjectHideFlags: 0
@@ -4781,7 +4977,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.8112, y: 264.585}
+  m_AnchoredPosition: {x: 1.8114, y: 183}
   m_SizeDelta: {x: 306.2632, y: 54.8302}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1876757937
@@ -5109,6 +5305,7 @@ MonoBehaviour:
   toolName: Ditch
   toolDescription: Builds a ditch that fire cant go through
   buttonContainer: {fileID: 1019133895}
+  useOwnPosition: 0
 --- !u!1 &2089083811
 GameObject:
   m_ObjectHideFlags: 0
@@ -5407,6 +5604,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlantManager
   cursorPreview: {fileID: 20647086}
+  waterSprite: {fileID: 7578331518214074657, guid: ac1c73a4816539f48964222131e7ae45, type: 3}
+  ditchSprite: {fileID: 7077909709018864193, guid: 877d5bed402d6754491ffb6314fbcaaf, type: 3}
+  removeSprite: {fileID: -6564193165698205349, guid: ff74dcb2670b10f44809945f4f00ed98, type: 3}
   seedCount: 10
   waterBudget: 10
   ditchBudget: 5

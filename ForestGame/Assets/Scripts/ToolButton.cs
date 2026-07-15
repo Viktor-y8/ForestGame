@@ -10,9 +10,15 @@ public class ToolButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     // Drag the tool buttons group parent here in the inspector
     [SerializeField] private RectTransform buttonContainer;
 
+    [SerializeField] private bool useOwnPosition = false;
+
     private void Awake()
     {
-        buttonContainer = transform.parent.GetComponent<RectTransform>();
+        if (useOwnPosition)
+            buttonContainer = GetComponent<RectTransform>();
+        else
+            buttonContainer = transform.parent.GetComponent<RectTransform>()
+                              ?? GetComponent<RectTransform>();
     }
 
     public void OnClick()

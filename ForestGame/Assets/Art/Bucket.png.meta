@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 5946a0ab5e87a1e41adc078511dd9201
+guid: ac1c73a4816539f48964222131e7ae45
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4869563128659536901
-    second: Panel9slice 2_0
+      213: 7578331518214074657
+    second: Bucket_0
+  - first:
+      213: 949185140388405158
+    second: Bucket_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +116,45 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Panel9slice 2_0
+      name: Bucket_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 64
-        height: 64
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 22, y: 24, z: 22, w: 24}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 50c671f8dd9249340800000000000000
-      internalID: 4869563128659536901
+      spriteID: 121fb453d54ab2960800000000000000
+      internalID: 7578331518214074657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bucket_1
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 11
+        width: 22
+        height: 21
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6af1eee2bde2c2d00800000000000000
+      internalID: 949185140388405158
       vertices: []
       indices: 
       edges: []
@@ -138,7 +163,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 1a514dc996ed7f34698a9b317c648595
+    spriteID: 89c361147d9116e408829af0c76e909b
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +173,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Panel9slice 2_0: 4869563128659536901
+      Bucket_0: 7578331518214074657
+      Bucket_1: 949185140388405158
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

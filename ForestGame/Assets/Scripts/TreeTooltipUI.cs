@@ -15,6 +15,7 @@ public class TreeTooltipUI : MonoBehaviour
     [SerializeField] private float fixedScreenY = 640f;
 
     [SerializeField] private RectTransform panelRect;
+
     private void Awake()
     {
         Instance = this;
@@ -31,7 +32,7 @@ public class TreeTooltipUI : MonoBehaviour
 
         foreach (RectTransform child in container)
         {
-            if (!child.gameObject.activeInHierarchy) continue;
+            if (!child.gameObject.activeInHierarchy || child.GetComponent<TMPro.TMP_Text>() != null) continue;
 
             Vector3[] corners = new Vector3[4];
             child.GetWorldCorners(corners);
@@ -39,9 +40,34 @@ public class TreeTooltipUI : MonoBehaviour
             count++;
         }
 
-        float centerY = count > 0 ? totalY / count : Screen.height / 2f;
+        float centerY;
+        float centerX;
 
-        panel.transform.position = new Vector3(fixedScreenX, centerY, 0f);
+        if (count > 0)
+        {
+            // Grouped buttons — use fixed X as before
+            centerY = totalY / count;
+            centerX = fixedScreenX;
+        }
+        else
+        {
+            // Standalone button — position relative to the button
+            Vector3[] ownCorners = new Vector3[4];
+            container.GetWorldCorners(ownCorners);
+            centerY = (ownCorners[0].y + ownCorners[1].y) / 2f;
+
+            float panelWidth = panelRect.rect.width;
+            float rightX = ownCorners[2].x + panelWidth / 2f;
+            float leftX = ownCorners[0].x - panelWidth / 2f;
+
+            // Check if placing to the right goes off screen
+            if (rightX + panelWidth / 2f > Screen.width)
+                centerX = leftX;
+            else
+                centerX = rightX;
+        }
+
+        panel.transform.position = new Vector3(centerX, centerY, 0f);
     }
 
     public void Show(TreeData data, RectTransform container)

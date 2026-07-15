@@ -21,6 +21,13 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private GameObject cursorPreview;
     private SpriteRenderer previewRenderer;
 
+
+    [Header("Tool Sprites")]
+    [SerializeField] private Sprite waterSprite;
+    [SerializeField] private Sprite ditchSprite;
+    [SerializeField] private Sprite removeSprite;
+
+
     private Grid grid;
 
     public int seedCount;
@@ -49,29 +56,40 @@ public class InteractionManager : MonoBehaviour
     {
         if (grid == null) return;
 
-        if (selectedTree != null)
+        bool hasActivePreview = selectedTree != null ||
+                                currTool == ToolType.Water ||
+                                currTool == ToolType.Ditch ||
+                                currTool == ToolType.RemoveTree;
+
+        if (hasActivePreview)
         {
             Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             pos.z = 0f;
 
             int x, y;
             grid.GetXY(pos, out x, out y);
-
             Soil soil = grid.GetValue(x, y);
-
-
             Vector3 snapped = grid.GetSnappedPosition(pos);
 
             if (soil != null)
             {
                 cursorPreview.transform.position = snapped;
                 cursorPreview.SetActive(true);
-                if (soil.HasObject)
-                    previewRenderer.color = new Color(1, 0, 0, 0.75f);
-                else
-                    previewRenderer.color = new Color(1, 1, 1, 0.75f);
+
+                // Red tint when action isn't valid for this tile
+                bool invalid = currTool switch
+                {
+                    ToolType.Plant => soil.HasObject,
+                    ToolType.RemoveTree => !soil.HasObject || soil.isLocked,
+                    ToolType.Ditch => soil.isLocked || soil.isOnFire || soil.CurrentObject is Ditch,
+                    ToolType.Water => soil.isLocked,
+                    _ => false
+                };
+
+                previewRenderer.color = invalid
+                    ? new Color(1, 0, 0, 0.75f)
+                    : new Color(1, 1, 1, 0.75f);
             }
-            //else cursorPreview.SetActive(false);
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -98,7 +116,25 @@ public class InteractionManager : MonoBehaviour
     {
         currTool = tool;
         selectedTree = null;
-        cursorPreview.SetActive(false);
+
+        Sprite toolSprite = tool switch
+        {
+            ToolType.Water => waterSprite,
+            ToolType.Ditch => ditchSprite,
+            ToolType.RemoveTree => removeSprite,
+            _ => null
+        };
+
+        if (toolSprite != null)
+        {
+            previewRenderer.sprite = toolSprite;
+            previewRenderer.color = new Color(1, 1, 1, 0.75f);
+            cursorPreview.SetActive(true);
+        }
+        else
+        {
+            cursorPreview.SetActive(false);
+        }
     }
 
     public void Interact(Soil soil)

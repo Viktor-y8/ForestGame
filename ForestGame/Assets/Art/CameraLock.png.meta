@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 5946a0ab5e87a1e41adc078511dd9201
+guid: 0ce9ee633c12daf4299db78173646c5d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4869563128659536901
-    second: Panel9slice 2_0
+      213: 7472177053155476146
+    second: CameraLock_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Panel9slice 2_0
+      name: CameraLock_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 64
-        height: 64
+        width: 20
+        height: 20
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 22, y: 24, z: 22, w: 24}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 50c671f8dd9249340800000000000000
-      internalID: 4869563128659536901
+      spriteID: 2b24828c07182b760800000000000000
+      internalID: 7472177053155476146
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 1a514dc996ed7f34698a9b317c648595
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Panel9slice 2_0: 4869563128659536901
+      CameraLock_0: 7472177053155476146
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CameraController : MonoBehaviour
 {
@@ -7,10 +8,14 @@ public class CameraController : MonoBehaviour
 
     private int screenWidth;
     private int screenHeight;
-    private bool moveCam = false;
+    private bool moveCam = true;
 
     private float minX, maxX, minY, maxY;
     private bool hasBounds = false;
+
+    [SerializeField] private Image buttonImage;
+    [SerializeField] private Sprite camOnSprite;
+    [SerializeField] private Sprite camOffSprite;
 
     void Start()
     {
@@ -35,9 +40,15 @@ public class CameraController : MonoBehaviour
         hasBounds = true;
     }
 
+    public void setMoveCam()
+    {
+        moveCam = !moveCam;
+        buttonImage.sprite = moveCam ? camOnSprite : camOffSprite;
+    }
+
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q)) moveCam = !moveCam;
+        if (Input.GetKeyDown(KeyCode.Q)) setMoveCam();
 
         if (!moveCam) return;
 
