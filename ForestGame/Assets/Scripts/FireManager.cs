@@ -46,7 +46,7 @@ public class FireManager : MonoBehaviour
     {
         foreach (Soil neighbor in grid.Adjacent(source))
         {
-            if (neighbor.isOnFire) continue;
+            if (neighbor.isOnFire || (neighbor.CurrentObject is Tree treeTemp && treeTemp.isImmune)) continue;
 
             float spreadChance = baseSpreadChance;
 
@@ -79,9 +79,9 @@ public class FireManager : MonoBehaviour
     }
 
     // Call this from UI or a game event to start a fire
-    public void StartFire(Soil soil)
+    public bool StartFire(Soil soil)
     {
-        soil.Ignite();
+        return soil.Ignite();
     }
 
     // Rain extinguishes fires

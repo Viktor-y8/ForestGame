@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fef8a22a289e2f346b377786f1582595, type: 3}
+  m_Name: SycamoreMaple
+  m_EditorClassIdentifier: Assembly-CSharp::TreeData
+  treeName: Sycamore Maple
+  spreadChance: 0.35
+  oldAgeStartYears: 250
+  maxAgeYears: 400
+  minMaturityAgeYears: 15
+  maxMaturityAgeYears: 25
+  seedlingAge: 1
+  saplingAge: 4
+  youngTreeAge: 12
+  preferredSoil: 4
+  droughtResistance: 0.3
+  shadeTolerance: 0.9
+  biodiversityValue: 0.7
+  moistureUsage: 0.6
+  minimumMoisture: 0.55
+  improvesSoil: 1
+  fireResistant: 0
+  diseaseResistant: 0
+  growthStages:
+  - {fileID: -7866928900747384746, guid: f992356a7c3ae4441a8661be585c820d, type: 3}
+  - {fileID: 5491473925631665107, guid: 28a4c1fb500801f4a8aaef31abd3b5f8, type: 3}
+  - {fileID: -7387366887252046623, guid: a28b93cc35b66bf4985b14140d15d58a, type: 3}
+  - {fileID: 6936955022469523740, guid: aa560daead2cb59479172124007a5289, type: 3}
+  previewSprite: {fileID: 6936955022469523740, guid: aa560daead2cb59479172124007a5289, type: 3}

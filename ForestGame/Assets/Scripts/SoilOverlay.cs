@@ -16,6 +16,25 @@ public class SoilOverlay : MonoBehaviour
     private Soil soil;
     private Vector3 waterWarningBasePosition;
 
+    [SerializeField] private SpriteRenderer darknessOverlay;  // a black square sprite child
+
+    public void SetDarkness(float amount)
+    {
+        if (darknessOverlay != null)
+            darknessOverlay.color = new Color(0f, 0f, 0f, amount);
+
+        // Also darken the tree sprite so it doesn't bleed over the darkness
+        if (soil.CurrentObject != null)
+        {
+            SpriteRenderer treeSr = soil.CurrentObject.GetComponent<SpriteRenderer>();
+            if (treeSr != null)
+            {
+                float brightness = 1f - amount;
+                treeSr.color = new Color(brightness, brightness, brightness, 1f);
+            }
+        }
+    }
+
     private void Awake()
     {
         soil = GetComponent<Soil>();
@@ -28,10 +47,13 @@ public class SoilOverlay : MonoBehaviour
         Refresh();
     }
 
-    private void Refresh()
+    public void Refresh()
     {
         fireOverlay.enabled = soil.isOnFire;
-        waterWarningOverlay.enabled = soil.moisture < lowMoistureThreshold && !soil.isOnFire;
+
+        bool treeIsImmune = soil.CurrentObject is Tree tree && tree.isImmune;
+
+        waterWarningOverlay.enabled = soil.moisture < lowMoistureThreshold && !soil.isOnFire && !treeIsImmune;
     }
 
     private void Update()

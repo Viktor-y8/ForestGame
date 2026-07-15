@@ -40,7 +40,7 @@ public class TreeOverlay : MonoBehaviour
 
     private void Refresh()
     {
-        skullOverlay.enabled = !tree.dead && tree.health < lowHealthThreshold;
+        skullOverlay.enabled = !tree.dead && tree.health < lowHealthThreshold && !tree.isImmune;
 
         if (!basePositionSet)
             RefreshSkullPosition();

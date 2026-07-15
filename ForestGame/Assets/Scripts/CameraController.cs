@@ -2,54 +2,59 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-
     public int boundary = 50;
-    public int speed = 5;
+    public float speed = 5f;
 
     private int screenWidth;
     private int screenHeight;
-
     private bool moveCam = false;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private float minX, maxX, minY, maxY;
+    private bool hasBounds = false;
+
     void Start()
     {
         screenWidth = Screen.width;
         screenHeight = Screen.height;
     }
 
-    // Update is called once per frame
+    public void SetBounds(Bounds bounds)
+    {
+        float camHalfH = Camera.main.orthographicSize;
+        float camHalfW = camHalfH * Camera.main.aspect;
+
+        minX = bounds.min.x + camHalfW;
+        maxX = bounds.max.x - camHalfW;
+        minY = bounds.min.y + camHalfH;
+        maxY = bounds.max.y - camHalfH;
+
+        // If zone is smaller than viewport, lock camera to zone center
+        if (minX > maxX) minX = maxX = bounds.center.x;
+        if (minY > maxY) minY = maxY = bounds.center.y;
+
+        hasBounds = true;
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q)) moveCam = !moveCam;
 
+        if (!moveCam) return;
 
-        if (moveCam)
+        float x = transform.position.x;
+        float y = transform.position.y;
+
+        if (Input.mousePosition.x > screenWidth - boundary) x += speed * Time.deltaTime;
+        if (Input.mousePosition.x < boundary) x -= speed * Time.deltaTime;
+        if (Input.mousePosition.y > screenHeight - boundary) y += speed * Time.deltaTime;
+        if (Input.mousePosition.y < boundary) y -= speed * Time.deltaTime;
+
+        if (hasBounds)
         {
-            float x = transform.position.x;
-            float y = transform.position.y;
-
-            if (Input.mousePosition.x > screenWidth - boundary)
-            {
-                x += speed * Time.deltaTime;
-            }
-
-            if (Input.mousePosition.x < 0 + boundary)
-            {
-                x -= speed * Time.deltaTime;
-            }
-
-            if (Input.mousePosition.y > screenHeight - boundary)
-            {
-                y += speed * Time.deltaTime;
-            }
-
-            if (Input.mousePosition.y < 0 + boundary)
-            {
-                y -= speed * Time.deltaTime;
-            }
-
-            transform.position = new Vector3(x, y, -10);
+            x = Mathf.Clamp(x, minX, maxX);
+            y = Mathf.Clamp(y, minY, maxY);
         }
+
+        transform.position = new Vector3(x, y, -10);
     }
 }

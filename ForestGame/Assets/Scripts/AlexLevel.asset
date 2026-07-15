@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5c7b191c21900a4195c795725f92310, type: 3}
+  m_Name: AlexLevel
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  width: 27
+  height: 10
+  zoneMask: {fileID: 2800000, guid: e02149134b7b42f45a57321eda1db9b9, type: 3}
+  zoneSoilType: 0
+  zoneMoisture: 0.5
+  zoneMoistureRetention: 1
+  borderTreePool:
+  - {fileID: 11400000, guid: 49138b779bf3d0b4fb2b918496337ad9, type: 2}
+  - {fileID: 11400000, guid: 7dd4ecb8c8b80ed42b42def04974069f, type: 2}
+  - {fileID: 11400000, guid: 71916c3326f746a40982570bd4f9604d, type: 2}
+  borderSoilType: 0
+  borderMoisture: 0.6
+  requiredMatureTrees: 0
+  timeLimitYears: 0
+  levelName: Alex
+  levelDescription: alex

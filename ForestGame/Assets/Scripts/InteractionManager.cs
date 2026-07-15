@@ -128,8 +128,8 @@ public class InteractionManager : MonoBehaviour
 
 
             case ToolType.Water:
-                FireManager.Instance.StartFire(soil);
-                //TryWater(soil);
+                //FireManager.Instance.StartFire(soil);
+                TryWater(soil);
                 break;
 
             case ToolType.Ditch:

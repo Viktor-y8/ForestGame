@@ -32,6 +32,7 @@ public class Soil : MonoBehaviour
     private const float burnRate = 0.12f;
     private bool recentlyOnFire = false;
     private int recentlyOnFireCounter = 0;
+    public bool isLocked = false;
 
     public void RecentFireCountUp() 
     { 
@@ -164,10 +165,8 @@ public class Soil : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
-        }
+        if (EventSystem.current.IsPointerOverGameObject()) return;
+        if (isLocked) return;  // can't interact with existing forest
 
         InteractionManager.Instance.Interact(this);
     }
@@ -192,13 +191,18 @@ public class Soil : MonoBehaviour
         return shouldReturnSeed;
     }
 
-    public void Ignite()
+    public bool Ignite()
     {
-        if (isOnFire || moisture > 0.6f || recentlyOnFire) return;  // wet soil won't ignite
-        if (CurrentObject is Ditch) return;
+        if (isOnFire || moisture > 0.6f || recentlyOnFire) return false;
+        if (CurrentObject is Ditch) return false;
 
         isOnFire = true;
         burnProgress = 0f;
+
+        // Refresh overlay immediately instead of waiting for next day tick
+        GetComponent<SoilOverlay>()?.Refresh();
+
+        return true;
     }
 
     public void Extinguish()

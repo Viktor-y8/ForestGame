@@ -1,15 +1,27 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
 
 public class WeatherManager : MonoBehaviour
 {
     public static WeatherManager Instance;
     public WeatherType currentWeather;
 
-    private void Awake() => Instance = this;
+    [SerializeField] private TMP_Text WeatherText;
+
+    private void Awake()
+    {
+
+        Instance = this;
+
+        WeatherText.text = "Season : " + TimeManager.Instance.CurrentSeason.ToString() + "\n" + "Weather: " + currentWeather.ToString();
+    } 
 
     public void GenerateWeather()
     {
         Season season = TimeManager.Instance.CurrentSeason;
+
+        WeatherText.text = season.ToString();
 
         float chanceRain, chanceDrought, chanceHeatwave;
 
@@ -59,5 +71,37 @@ public class WeatherManager : MonoBehaviour
         }
         else
             currentWeather = WeatherType.Normal;
+
+        float fireChance = 0.05f;
+
+        if (currentWeather == WeatherType.Drought) fireChance = 0.25f;
+        if (currentWeather == WeatherType.Heatwave) fireChance = 0.40f;
+
+        if (Random.value < fireChance)
+            StartRandomFire();
+
+
+        WeatherText.text = "Season : " + season.ToString() + "\n" + "Weather: " + currentWeather.ToString();
+    }
+
+    private void StartRandomFire()
+    {
+        List<Soil> candidates = GameManager.Instance.GetAllSoils()
+            .FindAll(s => !s.isLocked && !s.isOnFire && s.moisture < 0.55f);
+
+        if (candidates.Count == 0)
+            candidates = GameManager.Instance.GetAllSoils()
+                .FindAll(s => !s.isLocked && !s.isOnFire);
+
+        if (candidates.Count == 0) return;
+
+        candidates.Sort((a, b) => a.moisture.CompareTo(b.moisture));
+        int pickFrom = Mathf.Max(1, candidates.Count / 3);
+        Soil target = candidates[Random.Range(0, pickFrom)];
+
+        bool fireStarted = FireManager.Instance.StartFire(target);
+
+        if (fireStarted)
+            TimeManager.Instance.scaleTime(1f);
     }
 }

@@ -26,6 +26,9 @@ public class Tree : TileObject
     public int AgeYears => ageMonths / 12;
     public bool isMature => currentStage == TreeStage.Mature;
 
+    public bool canPlant = true;
+    public bool isImmune = false;
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -73,7 +76,7 @@ public class Tree : TileObject
 
         CheckNaturalDeath();
 
-        if (currentStage == TreeStage.Mature)
+        if (currentStage == TreeStage.Mature && canPlant)
             PlantToAdjacent();
     }
 
@@ -169,8 +172,21 @@ public class Tree : TileObject
 
     }
 
+    public void ForceSetMature()
+    {
+        ageMonths = data.minMaturityAgeYears * 12;
+        growthProgress = requiredGrowthForMaturity;
+        currentStage = TreeStage.Mature;
+        spriteRenderer.sprite = data.growthStages[(int)TreeStage.Mature];
+        health = 1f;
+        stress = 0f;
+    }
+
     private void CheckNaturalDeath()
     {
+
+        if (isImmune) return;
+
         int age = AgeYears;
 
         if (age >= data.maxAgeYears)
@@ -248,7 +264,7 @@ public class Tree : TileObject
 
     private void UpdateHealth()
     {
-        if (dead) return;
+        if (dead || isImmune) return;
 
         float healthChange = 0f;
 
@@ -275,6 +291,9 @@ public class Tree : TileObject
 
     private void Die()
     {
+
+        if (isImmune) return;
+
         dead = true;
 
         CancelInvoke();

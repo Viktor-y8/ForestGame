@@ -1,5 +1,7 @@
-using UnityEngine;
 using System;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class TimeManager : MonoBehaviour
 {
@@ -20,9 +22,17 @@ public class TimeManager : MonoBehaviour
     public event Action OnMonthPassed;
     public event Action OnYearPassed;
 
+    [SerializeField] private TMP_Text timeText;
+    [SerializeField] private Button timeScaleButton;
+    [SerializeField] private TMP_Text timeScaleText;
+
     private void Awake()
     {
         Instance = this;
+
+        timeScaleButton.onClick.AddListener(scaleTime);
+
+        timeScaleText.text = "x1";
     }
 
     private void Update()
@@ -34,7 +44,28 @@ public class TimeManager : MonoBehaviour
             timer = 0f;
             AdvanceDay();
         }
+
+        timeText.text = "Day: " + day + "\n" + "Month: " + month + "\n" + "Year: " + year;
     }
+
+    private void scaleTime()
+    {
+
+        if (timeScale == 1f) timeScale = 2f;
+        else if (timeScale == 2f) timeScale = 5f;
+        else if (timeScale == 5f) timeScale = 10f;
+        else if (timeScale == 10f) timeScale = 25f;
+        else if (timeScale == 25f) timeScale = 100f;
+        else timeScale = 1f;
+
+        timeScaleText.text = "x" + timeScale;
+    }
+
+    public void scaleTime(float scale)
+    {
+        timeScale = scale;
+        timeScaleText.text = "x" + timeScale;
+    } 
 
     private void AdvanceDay()
     {
