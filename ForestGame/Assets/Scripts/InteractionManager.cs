@@ -61,6 +61,30 @@ public class InteractionManager : MonoBehaviour
                                 currTool == ToolType.Ditch ||
                                 currTool == ToolType.RemoveTree;
 
+        if (currTool == ToolType.Water)
+        {
+            Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            pos.z = 0f;
+
+            int x, y;
+            grid.GetXY(pos, out x, out y);
+            Soil soil = grid.GetValue(x, y);
+
+            if (soil != null && !soil.isLocked)
+            {
+                Vector3 barPosition = soil.transform.position + Vector3.up * 0.8f;
+                WaterPreviewUI.Instance.Show(soil, waterAmount, barPosition);
+            }
+            else
+            {
+                WaterPreviewUI.Instance.Hide();
+            }
+        }
+        else
+        {
+            WaterPreviewUI.Instance.Hide();
+        }
+
         if (hasActivePreview)
         {
             Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -79,9 +103,9 @@ public class InteractionManager : MonoBehaviour
                 // Red tint when action isn't valid for this tile
                 bool invalid = currTool switch
                 {
-                    ToolType.Plant => soil.HasObject,
+                    ToolType.Plant => soil.HasObject || soil.recentlyOnFire,
                     ToolType.RemoveTree => !soil.HasObject || soil.isLocked,
-                    ToolType.Ditch => soil.isLocked || soil.isOnFire || soil.CurrentObject is Ditch,
+                    ToolType.Ditch => soil.isLocked || soil.isOnFire || soil.CurrentObject is Ditch || soil.recentlyOnFire,
                     ToolType.Water => soil.isLocked,
                     _ => false
                 };
@@ -192,7 +216,7 @@ public class InteractionManager : MonoBehaviour
     public void TryPlant(Soil soil)
     {
 
-        if (selectedTree == null || soil.HasObject || seedCount <= 0) return;
+        if (selectedTree == null || soil.HasObject || seedCount <= 0 || soil.recentlyOnFire) return;
 
         soil.PlantTree(selectedTree);
         seedCount--;
@@ -209,7 +233,7 @@ public class InteractionManager : MonoBehaviour
     public void TryDigDitch(Soil soil)
     {
         if (ditchBudget <= 0) return;
-        if (soil.isOnFire) return;
+        if (soil.isOnFire || soil.recentlyOnFire) return;
         if (soil.CurrentObject is Ditch) return;    // already a ditch
 
         if (soil.RemoveObject()) seedCount++;

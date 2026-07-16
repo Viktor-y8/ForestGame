@@ -30,14 +30,28 @@ public class Soil : MonoBehaviour
     [Range(0f, 1f)]
     public float burnProgress = 0f;               // 0–1, tree dies at 1
     private const float burnRate = 0.12f;
-    private bool recentlyOnFire = false;
+    public bool recentlyOnFire = false;
     private int recentlyOnFireCounter = 0;
     public bool isLocked = false;
 
+    [SerializeField]
+    private Sprite soilSprite;
+    [SerializeField]
+    private Sprite burntSprite;
+
     public void RecentFireCountUp() 
-    { 
-        if(recentlyOnFire) recentlyOnFireCounter++;
-        if(recentlyOnFireCounter >= 30) recentlyOnFire = false;
+    {
+        if (recentlyOnFire)
+        {
+            recentlyOnFireCounter++;
+            this.GetComponent<SpriteRenderer>().sprite = burntSprite;
+        }
+        if (recentlyOnFireCounter >= 30)
+        {
+            GetComponent<SpriteRenderer>().sprite = soilSprite;
+            recentlyOnFire = false;
+
+        }
     }
     public bool HasObject => currentObject != null;
 
