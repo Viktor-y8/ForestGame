@@ -24,6 +24,9 @@ public class TreeTooltipUI : MonoBehaviour
 
     private void Display(RectTransform container)
     {
+
+        if (TutorialManager.IsTutorialActive) return;
+
         panel.SetActive(true);
         Canvas.ForceUpdateCanvases();
 

@@ -1,4 +1,5 @@
 using Unity.VisualScripting;
+using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -45,7 +46,7 @@ public class WaterPreviewUI : MonoBehaviour
         fireThresholdMarker.anchoredPosition = markerPos;
 
         fireIconImage.color =
-        (projected >= 0.8f && current < 0.8f) ? Color.red : Color.white;
+        (projected >= 0.8f && current < 0.8f) ? Color.greenYellow : Color.white;
     }
 
     public void Hide()

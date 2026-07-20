@@ -21,9 +21,17 @@ public class LevelData : ScriptableObject
     public SoilType borderSoilType;
     [Range(0f, 1f)] public float borderMoisture = 0.6f;
 
+    [System.Serializable]
+    public class TreeRequirement
+    {
+        public TreeData treeType;
+        public int requiredMatureCount; // can be 0 if not required
+    }
+
+    // Add to LevelData class:
     [Header("Win Condition")]
-    public int requiredMatureTrees;
-    public int timeLimitYears;
+    public TreeRequirement[] treeRequirements;
+    public int timeLimitYears; // 0 = no limit
 
     [Header("Context")]
     public string levelName;

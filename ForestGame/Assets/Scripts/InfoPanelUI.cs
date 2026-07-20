@@ -1,6 +1,7 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InfoPanelUI : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class InfoPanelUI : MonoBehaviour
     [SerializeField] private TMP_Text treeText;
 
     [SerializeField] private Vector3 offset;
+
+    [SerializeField] private RectTransform panelRect;
 
     private Soil currentSoil;
 
@@ -25,11 +28,16 @@ public class InfoPanelUI : MonoBehaviour
 
         cam = Camera.main;
 
+        if (panelRect == null)
+            panelRect = panel.GetComponent<RectTransform>();
+
         Hide();
     }
 
     private void Update()
     {
+
+
         if (currentSoil == null || !panel.activeSelf)
             return;
 
@@ -82,11 +90,10 @@ public class InfoPanelUI : MonoBehaviour
             return;
 
         soilText.text =
-            $"Soil Type: {currentSoil.type}\n" +
+            //$"Soil Type: {currentSoil.type}\n" +
             $"Moisture: {(currentSoil.moisture * 100f):0}%\n" +
-            $"Fertility: {(currentSoil.fertility * 100f):0}%\n" +
-            $"Shade: {(currentSoil.shade * 100f):0}%\n" +
-            $"OnFire: {currentSoil.isOnFire}";
+            //$"Fertility: {(currentSoil.fertility * 100f):0}%\n" +
+            $"Shade: {(currentSoil.shade * 100f):0}%\n";
 
         Tree tree = currentSoil.CurrentObject is Tree treeObj ? treeObj : null;
 
@@ -103,6 +110,9 @@ public class InfoPanelUI : MonoBehaviour
         {
             treeText.text = "No tree planted";
         }
+
+        // Force layout to recalculate immediately so the panel resizes to fit content
+        LayoutRebuilder.ForceRebuildLayoutImmediate(panelRect);
     }
 
     public void Hide()

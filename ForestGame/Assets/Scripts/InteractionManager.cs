@@ -27,15 +27,19 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private Sprite ditchSprite;
     [SerializeField] private Sprite removeSprite;
 
+    [SerializeField] private TutorialStep firstPlantTutorial;
 
     private Grid grid;
 
     public int seedCount;
 
-    public int waterBudget = 10;
+    public int waterBudget = 20;
     private const float waterAmount = 0.3f;
 
     public int ditchBudget = 5;
+
+    public static event System.Action OnBudgetChanged;
+    public static event System.Action OnSeedChanged;
 
     private void Awake()
     {
@@ -55,6 +59,8 @@ public class InteractionManager : MonoBehaviour
     private void Update()
     {
         if (grid == null) return;
+
+        if (TutorialManager.IsTutorialActive) return;
 
         bool hasActivePreview = selectedTree != null ||
                                 currTool == ToolType.Water ||
@@ -163,6 +169,9 @@ public class InteractionManager : MonoBehaviour
 
     public void Interact(Soil soil)
     {
+
+        if (TutorialManager.IsTutorialActive) return;
+
         switch (currTool)
         {
             case ToolType.None:
@@ -220,6 +229,9 @@ public class InteractionManager : MonoBehaviour
 
         soil.PlantTree(selectedTree);
         seedCount--;
+        OnSeedChanged?.Invoke();
+
+        TutorialManager.Instance.TriggerTutorial(firstPlantTutorial);
     }
 
     public void TryWater(Soil soil)
@@ -228,26 +240,34 @@ public class InteractionManager : MonoBehaviour
 
         soil.Water(waterAmount);
         waterBudget--;
+
+        OnBudgetChanged?.Invoke();
     }
 
     public void TryDigDitch(Soil soil)
     {
         if (ditchBudget <= 0) return;
         if (soil.isOnFire || soil.recentlyOnFire) return;
-        if (soil.CurrentObject is Ditch) return;    // already a ditch
+        if (soil.CurrentObject is Ditch) return;
 
         if (soil.RemoveObject()) seedCount++;
 
         soil.PlantDitch();
         ditchBudget--;
+
+        OnBudgetChanged?.Invoke();
+
     }
 
     private void RefillToolBudget()
     {
-        int refill = WeatherManager.Instance.currentWeather == WeatherType.Rain ? 8 : 4;
-        waterBudget = Mathf.Min(waterBudget + refill, 20);
+        int refill = WeatherManager.Instance.currentWeather == WeatherType.Rain ? 18 : 9;
+        waterBudget = Mathf.Min(waterBudget + refill, 35);
 
-        ditchBudget += Mathf.Min(ditchBudget + 5, 25);
+        ditchBudget = Mathf.Min(ditchBudget + 5, 25);
+
+        OnBudgetChanged?.Invoke();
+
     }
 
     public void TryRemove(Soil soil)
@@ -256,6 +276,8 @@ public class InteractionManager : MonoBehaviour
         if (!soil.HasObject) return;
 
         if(soil.RemoveObject()) seedCount++;
+
+        OnSeedChanged?.Invoke();
     }
 
 

@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour
         FindObjectOfType<CameraController>()?.SetBounds(fullGridBounds);
 
         SpawnBorderPanels(level);
+
+        LevelManager.Instance.SetLevel(level);
     }
 
     public List<Soil> GetAllSoils()

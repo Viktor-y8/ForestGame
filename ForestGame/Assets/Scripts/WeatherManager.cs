@@ -7,12 +7,22 @@ public class WeatherManager : MonoBehaviour
     public static WeatherManager Instance;
     public WeatherType currentWeather;
 
+    [SerializeField] private GameObject rainEffect;
+    private ParticleSystem rainParticles;
+
     [SerializeField] private TMP_Text WeatherText;
 
     private void Awake()
     {
 
         Instance = this;
+
+        if (rainEffect != null)
+            rainParticles = rainEffect.GetComponent<ParticleSystem>();
+
+        if (rainParticles != null)
+            rainParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
 
         WeatherText.text = "Season : " + TimeManager.Instance.CurrentSeason.ToString() + "\n" + "Weather: " + currentWeather.ToString();
     } 
@@ -72,6 +82,8 @@ public class WeatherManager : MonoBehaviour
         else
             currentWeather = WeatherType.Normal;
 
+        UpdateRainVisual();
+
         float fireChance = 0.05f;
 
         if (currentWeather == WeatherType.Drought) fireChance = 0.25f;
@@ -82,6 +94,22 @@ public class WeatherManager : MonoBehaviour
 
 
         WeatherText.text = "Season : " + season.ToString() + "\n" + "Weather: " + currentWeather.ToString();
+    }
+
+    private void UpdateRainVisual()
+    {
+        if (rainParticles == null) return;
+
+        if (currentWeather == WeatherType.Rain)
+        {
+            if (!rainParticles.isPlaying)
+                rainParticles.Play();
+        }
+        else
+        {
+            if (rainParticles.isPlaying)
+                rainParticles.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
     }
 
     private void StartRandomFire()

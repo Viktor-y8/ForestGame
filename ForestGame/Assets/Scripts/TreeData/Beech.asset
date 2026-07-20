@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fef8a22a289e2f346b377786f1582595, type: 3}
   m_Name: Beech
   m_EditorClassIdentifier: Assembly-CSharp::TreeData
-  treeName: Beech
+  treeName: European Beech
   spreadChance: 0.15
   oldAgeStartYears: 150
   maxAgeYears: 300

@@ -39,6 +39,8 @@ public class Soil : MonoBehaviour
     [SerializeField]
     private Sprite burntSprite;
 
+    [SerializeField] private TutorialStep firstFireTutorial;
+
     public void RecentFireCountUp() 
     {
         if (recentlyOnFire)
@@ -209,6 +211,8 @@ public class Soil : MonoBehaviour
     {
         if (isOnFire || moisture > 0.6f || recentlyOnFire) return false;
         if (CurrentObject is Ditch) return false;
+
+        TutorialManager.Instance.TriggerTutorial(firstFireTutorial);
 
         isOnFire = true;
         burnProgress = 0f;

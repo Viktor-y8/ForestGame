@@ -52,6 +52,8 @@ public class CameraController : MonoBehaviour
 
         if (!moveCam) return;
 
+        if (TutorialManager.IsTutorialActive) return;
+
         float x = transform.position.x;
         float y = transform.position.y;
 

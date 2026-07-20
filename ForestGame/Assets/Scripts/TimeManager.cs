@@ -51,6 +51,8 @@ public class TimeManager : MonoBehaviour
     private void scaleTime()
     {
 
+        if (TutorialManager.IsTutorialActive) return;
+
         if (timeScale == 1f) timeScale = 2f;
         else if (timeScale == 2f) timeScale = 5f;
         else if (timeScale == 5f) timeScale = 10f;

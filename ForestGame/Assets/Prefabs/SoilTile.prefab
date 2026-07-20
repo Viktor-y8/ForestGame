@@ -133,9 +133,11 @@ MonoBehaviour:
   shade: 0
   isOnFire: 0
   burnProgress: 0
+  recentlyOnFire: 0
   isLocked: 0
   soilSprite: {fileID: 378112138187407063, guid: f194cbebc2c85b64c90fca14e9c282a8, type: 3}
   burntSprite: {fileID: -4690636121239756270, guid: 4bfffa6fa44d7744d88d578a2fb3daef, type: 3}
+  firstFireTutorial: {fileID: 11400000, guid: 0d3786c53227f4142946261fb738decb, type: 2}
 --- !u!114 &87359871035945099
 MonoBehaviour:
   m_ObjectHideFlags: 0

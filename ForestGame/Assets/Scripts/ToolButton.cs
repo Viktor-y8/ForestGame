@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -7,10 +8,9 @@ public class ToolButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     [SerializeField] private string toolName;
     [TextArea][SerializeField] private string toolDescription;
 
-    // Drag the tool buttons group parent here in the inspector
     [SerializeField] private RectTransform buttonContainer;
-
     [SerializeField] private bool useOwnPosition = false;
+    [SerializeField] private TMP_Text toolText;
 
     private void Awake()
     {
@@ -19,6 +19,27 @@ public class ToolButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         else
             buttonContainer = transform.parent.GetComponent<RectTransform>()
                               ?? GetComponent<RectTransform>();
+    }
+
+    private void Start()
+    {
+        RefreshCountText();
+        InteractionManager.OnBudgetChanged += RefreshCountText;
+    }
+
+    private void OnDestroy()
+    {
+        InteractionManager.OnBudgetChanged -= RefreshCountText;
+    }
+
+    private void RefreshCountText()
+    {
+        if (toolText == null) return;
+
+        if (tool == ToolType.Ditch)
+            toolText.text = toolName + " - " + InteractionManager.Instance.ditchBudget;
+        else if (tool == ToolType.Water)
+            toolText.text = toolName + " - " + InteractionManager.Instance.waterBudget;
     }
 
     public void OnClick()
