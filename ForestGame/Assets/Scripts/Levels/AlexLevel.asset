@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AlexLevel
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   width: 27
-  height: 10
+  height: 9
   zoneMask: {fileID: 2800000, guid: e02149134b7b42f45a57321eda1db9b9, type: 3}
   zoneSoilType: 0
   zoneMoisture: 0.5
@@ -24,7 +24,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 71916c3326f746a40982570bd4f9604d, type: 2}
   borderSoilType: 0
   borderMoisture: 0.6
-  requiredMatureTrees: 0
+  treeRequirements: []
   timeLimitYears: 0
   levelName: Alex
   levelDescription: alex

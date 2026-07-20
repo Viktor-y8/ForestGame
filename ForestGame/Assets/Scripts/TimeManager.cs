@@ -92,8 +92,6 @@ public class TimeManager : MonoBehaviour
                 OnYearPassed?.Invoke();
             }
         }
-
-        Debug.Log($"Year {year}, Month {month}, Day {day}");
     }
 
 

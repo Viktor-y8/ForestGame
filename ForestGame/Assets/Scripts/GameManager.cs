@@ -20,8 +20,14 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        if (startingLevel != null)
-            LoadLevel(startingLevel);
+        LevelData levelToLoad = LevelSelection.PendingLevel != null
+            ? LevelSelection.PendingLevel
+            : startingLevel;
+
+        if (levelToLoad != null)
+            LoadLevel(levelToLoad);
+
+        LevelSelection.PendingLevel = null;
     }
 
     public void LoadLevel(LevelData level)
@@ -49,6 +55,18 @@ public class GameManager : MonoBehaviour
         SpawnBorderPanels(level);
 
         LevelManager.Instance.SetLevel(level);
+
+        ShowLevelIntro(level);
+    }
+
+    private void ShowLevelIntro(LevelData level)
+    {
+        TutorialStep introStep = ScriptableObject.CreateInstance<TutorialStep>();
+        introStep.stepId = "level_intro_" + level.name;
+        introStep.title = level.levelName;
+        introStep.body = level.levelDescription;
+
+        TutorialManager.Instance.ForceShow(introStep);
     }
 
     public List<Soil> GetAllSoils()

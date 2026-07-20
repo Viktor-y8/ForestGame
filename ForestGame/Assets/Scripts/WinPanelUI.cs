@@ -21,7 +21,7 @@ public class WinPanelUI : MonoBehaviour
 
     public void GoToMenu()
     {
-        Time.timeScale = 1f; // safety reset in case anything reads Unity's own timeScale
+        Time.timeScale = 1f;
         SceneManager.LoadScene(menuSceneName);
     }
 }

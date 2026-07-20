@@ -29,15 +29,17 @@ public class LevelManager : MonoBehaviour
         if (hasWon || currentLevel == null) return;
         if (TutorialManager.IsTutorialActive) return;
 
-        // Count mature trees per species
+
+
         Dictionary<TreeData, int> matureCounts = new Dictionary<TreeData, int>();
 
         foreach (Soil soil in GameManager.Instance.GetAllSoils())
         {
-            if (soil.isLocked) continue; // only count player-planted trees
+            if (soil.isLocked) continue;
 
             if (soil.CurrentObject is Tree tree && tree.isMature && !tree.isImmune)
             {
+
                 if (!matureCounts.ContainsKey(tree.data))
                     matureCounts[tree.data] = 0;
 
@@ -45,18 +47,17 @@ public class LevelManager : MonoBehaviour
             }
         }
 
-        // Check every requirement is satisfied
         foreach (TreeRequirement req in currentLevel.treeRequirements)
         {
-            if (req.requiredMatureCount <= 0) continue; // 0 = not required
+            if (req.requiredMatureCount <= 0) continue;
 
             int current = matureCounts.ContainsKey(req.treeType) ? matureCounts[req.treeType] : 0;
 
+
             if (current < req.requiredMatureCount)
-                return; // this requirement not yet met, keep waiting
+                return;
         }
 
-        // All requirements met
         TriggerWin();
     }
 
