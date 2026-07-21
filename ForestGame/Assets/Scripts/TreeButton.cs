@@ -19,6 +19,7 @@ public class TreeButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void OnClick()
     {
+        SoundManager.Instance.PlaySFX("buttonSFX");
         InteractionManager.Instance.SelectPlantTool(treeData);
     }
 

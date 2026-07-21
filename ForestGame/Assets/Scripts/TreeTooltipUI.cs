@@ -79,12 +79,12 @@ public class TreeTooltipUI : MonoBehaviour
         statsText.text =
             $"Matures in: {data.minMaturityAgeYears}–{data.maxMaturityAgeYears} years\n" +
             $"Max age: {data.maxAgeYears} years\n" +
-            $"Preferred soil: {data.preferredSoil}\n" +
+            //$"Preferred soil: {data.preferredSoil}\n" +
             $"Drought resistance: {(data.droughtResistance * 100f):0}%\n" +
             $"Shade tolerance: {(data.shadeTolerance * 100f):0}%\n" +
             $"Moisture usage: {(data.moistureUsage * 100f):0}%\n" +
-            $"Spread chance: {(data.spreadChance * 100f):0}%\n" +
-            $"Biodiversity value: {(data.biodiversityValue * 100f):0}%\n";
+            $"Spread chance: {(data.spreadChance * 100f):0}%\n";
+            //$"Biodiversity value: {(data.biodiversityValue * 100f):0}%\n";
 
         Display(container);
     }

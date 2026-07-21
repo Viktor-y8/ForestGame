@@ -29,6 +29,8 @@ public class Tree : TileObject
     public bool canPlant = true;
     public bool isImmune = false;
 
+    private float accumulatedFireRisk = 0;
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -57,6 +59,36 @@ public class Tree : TileObject
         ConsumeMoisture();
         CalculateStress();
         UpdateHealth();
+
+        if (TimeManager.IsFastForwarding)
+            AccumulateFireRisk();
+    }
+
+    private void AccumulateFireRisk()
+    {
+        // Same factors that would make a real fire likely to ignite/spread here
+        float dryness = 1f - soil.moisture;
+        float fireResistanceFactor = data.fireResistant ? 0.2f : 1f;
+        float stressFactor = 1f + stress * 0.5f;
+
+        float dailyRisk = 0.00015f * dryness * fireResistanceFactor * stressFactor;
+
+        // Heatwave/drought seasons increase it — check current weather
+        if (WeatherManager.Instance.currentWeather == WeatherType.Drought) dailyRisk *= 2f;
+        if (WeatherManager.Instance.currentWeather == WeatherType.Heatwave) dailyRisk *= 3f;
+
+        accumulatedFireRisk += dailyRisk;
+    }
+
+    public void ResolveFireRisk()
+    {
+        if (Random.value < accumulatedFireRisk)
+        {
+            InteractionManager.Instance.firesStarted++;
+            Die();
+        }
+
+        accumulatedFireRisk = 0f;
     }
 
     private void ConsumeMoisture()
@@ -234,6 +266,8 @@ public class Tree : TileObject
         Soil chosen = validSoils[Random.Range(0, validSoils.Count)];
 
         chosen.PlantTree(data);
+
+        InteractionManager.Instance.treesPlanted++;
     }
 
     private void CalculateStress()
@@ -299,6 +333,8 @@ public class Tree : TileObject
         CancelInvoke();
 
         soil.RemoveObject();
+
+        InteractionManager.Instance.treesDied++;
 
         Destroy(gameObject);
 

@@ -49,11 +49,12 @@ public class SoilOverlay : MonoBehaviour
 
     public void Refresh()
     {
+
         fireOverlay.enabled = soil.isOnFire;
 
         bool treeIsImmune = soil.CurrentObject is Tree tree && tree.isImmune;
 
-        waterWarningOverlay.enabled = soil.moisture < lowMoistureThreshold && !soil.isOnFire && !treeIsImmune;
+        waterWarningOverlay.enabled = soil.moisture < lowMoistureThreshold && !soil.isOnFire && !treeIsImmune && soil.HasObject;
     }
 
     private void Update()

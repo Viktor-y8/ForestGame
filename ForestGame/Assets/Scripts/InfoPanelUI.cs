@@ -104,14 +104,14 @@ public class InfoPanelUI : MonoBehaviour
                 $"Tree: {tree.data.treeName}\n" +
                 $"Health: {(tree.health * 100f):0}%\n" +
                 $"Mature: {tree.isMature}\n" +
-                $"Age: {tree.AgeYears} months";
+                $"Age: {tree.AgeYears} years";
         }
         else
         {
             treeText.text = "No tree planted";
         }
 
-        // Force layout to recalculate immediately so the panel resizes to fit content
+        //Force layout to recalculate immediately so the panel resizes to fit content
         LayoutRebuilder.ForceRebuildLayoutImmediate(panelRect);
     }
 

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5c7b191c21900a4195c795725f92310, type: 3}
   m_Name: Level1
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
-  width: 24
-  height: 17
+  width: 23
+  height: 16
   zoneMask: {fileID: 2800000, guid: 71aa5cc8a30c172459be7cb5c54ce3b0, type: 3}
   zoneSoilType: 0
   zoneMoisture: 0.5
@@ -21,12 +21,15 @@ MonoBehaviour:
   borderTreePool:
   - {fileID: 11400000, guid: 49138b779bf3d0b4fb2b918496337ad9, type: 2}
   borderSoilType: 0
-  borderMoisture: 0.6
+  borderMoisture: 1
+  seedCount: 9
   treeRequirements:
   - treeType: {fileID: 11400000, guid: 49138b779bf3d0b4fb2b918496337ad9, type: 2}
-    requiredMatureCount: 33
+    requiredMatureCount: 21
   timeLimitYears: 0
   levelName: Level 1 - Maple Forest
   levelDescription: There is a danger of a landslide so it is your job to fill this
     empty patch of land in the middle of the forest.\nYour job is to fill it all
-    with only Sycamore Maples!
+    with only Sycamore Maples!\n Quick tip - you can Left Click on the soils to display
+    info about them and the trees that are planted.
+  backgroundMusic: {fileID: 8300000, guid: 17e5b919bbb195745869cfa7e2901c71, type: 3}

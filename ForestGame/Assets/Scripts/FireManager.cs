@@ -25,6 +25,8 @@ public class FireManager : MonoBehaviour
 
     private void UpdateFires()
     {
+        if (TimeManager.IsFastForwarding) return;
+
         List<Soil> allSoils = grid.GetAllSoils();
         List<Soil> burning = new List<Soil>();
 

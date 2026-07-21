@@ -12,6 +12,8 @@ public class WeatherManager : MonoBehaviour
 
     [SerializeField] private TMP_Text WeatherText;
 
+    public AudioClip rainSFX;
+
     private void Awake()
     {
 
@@ -28,6 +30,78 @@ public class WeatherManager : MonoBehaviour
     } 
 
     public void GenerateWeather()
+    {
+        Season season = TimeManager.Instance.CurrentSeason;
+
+        WeatherText.text = season.ToString();
+
+        if (currentWeather == WeatherType.Rain) SoundManager.Instance.StopLoopingSFX(this);
+
+        float chanceRain, chanceDrought, chanceHeatwave;
+
+        switch (season)
+        {
+            case Season.Spring:
+                chanceRain = 0.35f;
+                chanceDrought = 0.05f;
+                chanceHeatwave = 0.00f;
+                break;
+
+            case Season.Summer:
+                chanceRain = 0.10f;
+                chanceDrought = 0.25f;
+                chanceHeatwave = 0.20f;
+                break;
+
+            case Season.Autumn:
+                chanceRain = 0.20f;
+                chanceDrought = 0.10f;
+                chanceHeatwave = 0.00f;
+                break;
+
+            case Season.Winter:
+                chanceRain = 0.25f;
+                chanceDrought = 0.05f;
+                chanceHeatwave = 0.00f;
+                break;
+
+            default:
+                chanceRain = 0.20f;
+                chanceDrought = 0.10f;
+                chanceHeatwave = 0.00f;
+                break;
+        }
+
+        float r = Random.value;
+
+        if (r < chanceDrought)
+            currentWeather = WeatherType.Drought;
+        else if (r < chanceDrought + chanceHeatwave)
+            currentWeather = WeatherType.Heatwave;
+        else if (r < chanceDrought + chanceHeatwave + chanceRain)
+        { 
+            currentWeather = WeatherType.Rain;
+            FireManager.Instance.OnRain();
+            SoundManager.Instance.PlayLoopingSFX(this, rainSFX, transform.position, false);
+        }
+        else
+            currentWeather = WeatherType.Normal;
+
+        UpdateRainVisual();
+
+        float fireChance = 0.05f;
+
+        if (currentWeather == WeatherType.Drought) fireChance = 0.25f;
+        if (currentWeather == WeatherType.Heatwave) fireChance = 0.40f;
+
+        if (Random.value < fireChance)
+            StartRandomFire();
+
+
+        WeatherText.text = "Season : " + season.ToString() + "\n" + "Weather: " + currentWeather.ToString();
+    }
+
+    public void GenerateWeatherSilent()
     {
         Season season = TimeManager.Instance.CurrentSeason;
 
@@ -75,7 +149,7 @@ public class WeatherManager : MonoBehaviour
         else if (r < chanceDrought + chanceHeatwave)
             currentWeather = WeatherType.Heatwave;
         else if (r < chanceDrought + chanceHeatwave + chanceRain)
-        { 
+        {
             currentWeather = WeatherType.Rain;
             FireManager.Instance.OnRain();
         }
@@ -83,15 +157,6 @@ public class WeatherManager : MonoBehaviour
             currentWeather = WeatherType.Normal;
 
         UpdateRainVisual();
-
-        float fireChance = 0.05f;
-
-        if (currentWeather == WeatherType.Drought) fireChance = 0.25f;
-        if (currentWeather == WeatherType.Heatwave) fireChance = 0.40f;
-
-        if (Random.value < fireChance)
-            StartRandomFire();
-
 
         WeatherText.text = "Season : " + season.ToString() + "\n" + "Weather: " + currentWeather.ToString();
     }

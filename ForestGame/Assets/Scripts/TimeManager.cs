@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,6 +26,8 @@ public class TimeManager : MonoBehaviour
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private Button timeScaleButton;
     [SerializeField] private TMP_Text timeScaleText;
+
+    public static bool IsFastForwarding { get; private set; } = false;
 
     private void Awake()
     {
@@ -104,6 +107,67 @@ public class TimeManager : MonoBehaviour
             if (month >= 9 && month <= 11) return Season.Autumn;
 
             return Season.Winter;
+        }
+    }
+
+    public void SkipYears(int years)
+    {
+        StartCoroutine(SkipYearsRoutine(years));
+    }
+
+    private IEnumerator SkipYearsRoutine(int years)
+    {
+        IsFastForwarding = true;
+
+        int totalDays = years * 360;
+
+        for (int i = 0; i < totalDays; i++)
+        {
+            day++;
+            OnDayPassed?.Invoke(); // moisture, stress, health all still run normally
+
+            if (day > 30)
+            {
+                day = 1;
+                month++;
+
+                WeatherManager.Instance.GenerateWeatherSilent(); // no real fire spawn during skip
+                OnMonthPassed?.Invoke(); // tree growth still runs normally
+
+                if (month > 12)
+                {
+                    month = 1;
+                    year++;
+                    OnYearPassed?.Invoke();
+                }
+            }
+
+            ResolveFireRisk();
+
+            if (i % 30 == 0)
+                yield return null;
+        }
+
+        IsFastForwarding = false;
+        RefreshAllVisuals();
+    }
+
+    private void RefreshAllVisuals()
+    {
+        foreach (Soil soil in GameManager.Instance.GetAllSoils())
+        {
+            soil.GetComponent<SoilOverlay>()?.Refresh();
+        }
+    }
+
+    private void ResolveFireRisk()
+    {
+        foreach (Soil soil in GameManager.Instance.GetAllSoils())
+        {
+            if (soil.CurrentObject is Tree tree && !tree.dead && !tree.isImmune)
+            {
+                tree.ResolveFireRisk();
+            }
         }
     }
 }

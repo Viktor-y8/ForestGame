@@ -41,6 +41,7 @@ public class Soil : MonoBehaviour
 
     [SerializeField] private TutorialStep firstFireTutorial;
 
+    public AudioClip fireLoopClip;
     public void RecentFireCountUp() 
     {
         if (recentlyOnFire)
@@ -196,6 +197,8 @@ public class Soil : MonoBehaviour
     {
         if (currentObject == null) return false;
 
+        InteractionManager.Instance.treesDied++;
+
         bool shouldReturnSeed = currentObject is Tree tree && tree.justPlanted;
 
         Destroy(currentObject.gameObject);
@@ -220,6 +223,11 @@ public class Soil : MonoBehaviour
         // Refresh overlay immediately instead of waiting for next day tick
         GetComponent<SoilOverlay>()?.Refresh();
 
+        InteractionManager.Instance.firesStarted++;
+
+        SoundManager.Instance.PlaySFX("fireSFX", 1f, 0.1f);
+        SoundManager.Instance.PlayLoopingSFX(this, fireLoopClip, transform.position);
+
         return true;
     }
 
@@ -227,6 +235,8 @@ public class Soil : MonoBehaviour
     {
         isOnFire = false;
         burnProgress = 0f;
+
+        SoundManager.Instance.StopLoopingSFX(this);
     }
 
     public void UpdateFire()

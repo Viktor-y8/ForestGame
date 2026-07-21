@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c485fc8530e2ac041b5f3c4405736594, type: 3}
+  m_Name: SoundLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::SoundLibrary
+  sounds:
+  - name: plantSFX
+    clip: {fileID: 8300000, guid: 83c3bac16d3a07c4a9ceb9f6b58cc754, type: 3}
+  - name: menuMusic
+    clip: {fileID: 8300000, guid: 283cf65056517be45a4fcf3190b13ce7, type: 3}
+  - name: levelMusic
+    clip: {fileID: 8300000, guid: 17e5b919bbb195745869cfa7e2901c71, type: 3}
+  - name: waterSFX
+    clip: {fileID: 8300000, guid: a8f35cc24fcd51146956336d8dcfc8e4, type: 3}
+  - name: fireSFX
+    clip: {fileID: 8300000, guid: 22a6259a38a844447a9849884f513b79, type: 3}
+  - name: buttonSFX
+    clip: {fileID: 8300000, guid: b3e3c138676a1b14098ec5d27a16a6c1, type: 3}
+  - name: removeSFX
+    clip: {fileID: 8300000, guid: 1f4f853ec7223b9439ddbb32ddd0dc71, type: 3}
+  - name: winSFX
+    clip: {fileID: 8300000, guid: ca5aff753f896de4196cba1c8feb0c70, type: 3}
+  - name: loseSFX
+    clip: {fileID: 8300000, guid: cbd71d652b08aac49b69c05ebfdd9a78, type: 3}

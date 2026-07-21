@@ -37,14 +37,14 @@ public class ToolButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (toolText == null) return;
 
         if (tool == ToolType.Ditch)
-            toolText.text = toolName + " - " + InteractionManager.Instance.ditchBudget;
+            toolText.text = toolName + " - " + InteractionManager.Instance.ditchBudget + " / 25";
         else if (tool == ToolType.Water)
-            toolText.text = toolName + " - " + InteractionManager.Instance.waterBudget;
+            toolText.text = toolName + " - " + InteractionManager.Instance.waterBudget + " / 35";
     }
 
     public void OnClick()
     {
-        InteractionManager.Instance.SelectTool(tool);
+        SoundManager.Instance.PlaySFX("buttonSFX"); InteractionManager.Instance.SelectTool(tool);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

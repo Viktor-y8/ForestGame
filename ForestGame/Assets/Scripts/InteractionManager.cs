@@ -41,6 +41,12 @@ public class InteractionManager : MonoBehaviour
     public static event System.Action OnBudgetChanged;
     public static event System.Action OnSeedChanged;
 
+    public int treesPlanted = 0;
+    public int treesDied = 0;
+    public int waterToolsUsed = 0;
+    public int ditchToolsUsed = 0;
+    public int firesStarted = 0;
+
     private void Awake()
     {
         Instance = this;
@@ -60,7 +66,7 @@ public class InteractionManager : MonoBehaviour
     {
         if (grid == null) return;
 
-        if (TutorialManager.IsTutorialActive) return;
+        if (TutorialManager.IsTutorialActive || TimeManager.IsFastForwarding) return;
 
         bool hasActivePreview = selectedTree != null ||
                                 currTool == ToolType.Water ||
@@ -231,7 +237,11 @@ public class InteractionManager : MonoBehaviour
         seedCount--;
         OnSeedChanged?.Invoke();
 
+        treesPlanted++;
+
         TutorialManager.Instance.TriggerTutorial(firstPlantTutorial);
+
+        SoundManager.Instance.PlaySFX("plantSFX");
     }
 
     public void TryWater(Soil soil)
@@ -241,7 +251,11 @@ public class InteractionManager : MonoBehaviour
         soil.Water(waterAmount);
         waterBudget--;
 
+        waterToolsUsed++;
+
         OnBudgetChanged?.Invoke();
+
+        SoundManager.Instance.PlaySFX("waterSFX");
     }
 
     public void TryDigDitch(Soil soil)
@@ -255,7 +269,11 @@ public class InteractionManager : MonoBehaviour
         soil.PlantDitch();
         ditchBudget--;
 
+        ditchToolsUsed++;
+
         OnBudgetChanged?.Invoke();
+
+        SoundManager.Instance.PlaySFX("plantSFX");
 
     }
 
@@ -278,6 +296,8 @@ public class InteractionManager : MonoBehaviour
         if(soil.RemoveObject()) seedCount++;
 
         OnSeedChanged?.Invoke();
+
+        SoundManager.Instance.PlaySFX("removeSFX");
     }
 
 

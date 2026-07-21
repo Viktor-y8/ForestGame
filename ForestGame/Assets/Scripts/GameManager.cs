@@ -56,7 +56,11 @@ public class GameManager : MonoBehaviour
 
         LevelManager.Instance.SetLevel(level);
 
+        InteractionManager.Instance.seedCount = level.seedCount;
+
         ShowLevelIntro(level);
+
+        SoundManager.Instance.PlayMusic(level.backgroundMusic);
     }
 
     private void ShowLevelIntro(LevelData level)

@@ -11,6 +11,8 @@ public class LevelManager : MonoBehaviour
     private LevelData currentLevel;
     private bool hasWon = false;
 
+    public LevelData CurrentLevel => currentLevel;
+
     private void Awake()
     {
         Instance = this;
@@ -22,6 +24,7 @@ public class LevelManager : MonoBehaviour
         hasWon = false;
 
         TimeManager.Instance.OnDayPassed += CheckWinCondition;
+        TimeManager.Instance.OnDayPassed += CheckLossCondition;
     }
 
     private void CheckWinCondition()
@@ -31,21 +34,7 @@ public class LevelManager : MonoBehaviour
 
 
 
-        Dictionary<TreeData, int> matureCounts = new Dictionary<TreeData, int>();
-
-        foreach (Soil soil in GameManager.Instance.GetAllSoils())
-        {
-            if (soil.isLocked) continue;
-
-            if (soil.CurrentObject is Tree tree && tree.isMature && !tree.isImmune)
-            {
-
-                if (!matureCounts.ContainsKey(tree.data))
-                    matureCounts[tree.data] = 0;
-
-                matureCounts[tree.data]++;
-            }
-        }
+        Dictionary<TreeData, int> matureCounts = GetMatureTreeCounts();
 
         foreach (TreeRequirement req in currentLevel.treeRequirements)
         {
@@ -61,9 +50,67 @@ public class LevelManager : MonoBehaviour
         TriggerWin();
     }
 
+    private void CheckLossCondition()
+    {
+        if (hasWon || currentLevel == null)
+            return;
+
+        // If the player still has seeds, they can continue.
+        if (InteractionManager.Instance.seedCount > 0)
+            return;
+
+        // Check if any living tree still exists.
+        foreach (Soil soil in GameManager.Instance.GetAllSoils())
+        {
+            if (soil.isLocked)
+                continue;
+
+            if (soil.CurrentObject is Tree tree && !tree.dead)
+            {
+                // At least one living tree remains.
+                return;
+            }
+        }
+
+        TriggerLoss();
+    }
+
+    private void TriggerLoss()
+    {
+
+        TimeManager.Instance.scaleTime(0f);
+
+        winPanel.loss = true;
+
+        winPanel.Show();
+    }
+
+    public Dictionary<TreeData, int> GetMatureTreeCounts()
+    {
+        Dictionary<TreeData, int> matureCounts = new();
+
+        foreach (Soil soil in GameManager.Instance.GetAllSoils())
+        {
+            if (soil.isLocked) continue;
+
+            if (soil.CurrentObject is Tree tree && tree.isMature && !tree.isImmune)
+            {
+                if (!matureCounts.ContainsKey(tree.data))
+                    matureCounts[tree.data] = 0;
+
+                matureCounts[tree.data]++;
+            }
+        }
+
+        return matureCounts;
+    }
     private void TriggerWin()
     {
+
         hasWon = true;
+
+        winPanel.win = true;
+
         TimeManager.Instance.scaleTime(0f);
         winPanel.Show();
     }
@@ -71,6 +118,9 @@ public class LevelManager : MonoBehaviour
     private void OnDestroy()
     {
         if (TimeManager.Instance != null)
-            TimeManager.Instance.OnMonthPassed -= CheckWinCondition;
+        {
+            TimeManager.Instance.OnDayPassed -= CheckWinCondition;
+            TimeManager.Instance.OnDayPassed -= CheckLossCondition;
+        }
     }
 }

@@ -8,7 +8,7 @@ public class LevelData : ScriptableObject
     public int height;
 
     [Header("Zone Mask")]
-    [Tooltip("White pixels = player zone, black = border forest. Must be read/write enabled.")]
+    [Tooltip("White pixels = player zone, black = border forest.")]
     public Texture2D zoneMask;
 
     [Header("Player Zone Soil")]
@@ -20,6 +20,8 @@ public class LevelData : ScriptableObject
     public TreeData[] borderTreePool;
     public SoilType borderSoilType;
     [Range(0f, 1f)] public float borderMoisture = 0.6f;
+
+    public int seedCount;
 
     [System.Serializable]
     public class TreeRequirement
@@ -36,6 +38,9 @@ public class LevelData : ScriptableObject
     [Header("Context")]
     public string levelName;
     [TextArea] public string levelDescription;
+
+    [Header("Audio")]
+    public AudioClip backgroundMusic;
 
     // Samples the mask texture to determine if a tile is in the player zone
     public bool IsPlayerZone(int x, int y)

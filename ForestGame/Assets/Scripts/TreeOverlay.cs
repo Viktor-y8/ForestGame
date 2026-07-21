@@ -24,7 +24,6 @@ public class TreeOverlay : MonoBehaviour
         Refresh();
     }
 
-    // Call this whenever the tree sprite changes stage
     public void RefreshSkullPosition()
     {
         SpriteRenderer treeSprite = GetComponent<SpriteRenderer>();
@@ -32,7 +31,6 @@ public class TreeOverlay : MonoBehaviour
 
         Bounds bounds = treeSprite.sprite.bounds;
 
-        // Top-right corner of whatever sprite is currently shown
         skullBasePosition = new Vector3(bounds.max.x, bounds.max.y, 0f);
         skullOverlay.transform.localPosition = skullBasePosition;
         basePositionSet = true;

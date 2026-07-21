@@ -48,7 +48,11 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q)) setMoveCam();
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            setMoveCam();
+            SoundManager.Instance.PlaySFX("buttonSFX");
+        }
 
         if (!moveCam) return;
 

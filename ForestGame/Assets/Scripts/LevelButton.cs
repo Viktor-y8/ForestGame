@@ -8,6 +8,7 @@ public class LevelButton : MonoBehaviour
 
     public void LoadLevel()
     {
+        SoundManager.Instance.PlaySFX("buttonSFX");
         LevelSelection.PendingLevel = levelToLoad;
         SceneManager.LoadScene(gameSceneName);
     }
