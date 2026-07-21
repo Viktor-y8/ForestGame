@@ -7,7 +7,6 @@ public class FireManager : MonoBehaviour
 
     [SerializeField] private Grid grid;
 
-    // Base chance fire spreads to a neighbor per day
     private const float baseSpreadChance = 0.12f;
 
     private void Awake() => Instance = this;
@@ -30,8 +29,6 @@ public class FireManager : MonoBehaviour
         List<Soil> allSoils = grid.GetAllSoils();
         List<Soil> burning = new List<Soil>();
 
-        // Collect currently burning tiles first to avoid
-        // spreading from tiles ignited this same tick
         foreach (Soil s in allSoils)
         {
             if (s.isOnFire) burning.Add(s);
@@ -52,19 +49,15 @@ public class FireManager : MonoBehaviour
 
             float spreadChance = baseSpreadChance;
 
-            // Dry neighbors catch more easily
             spreadChance *= (1f - neighbor.moisture);
 
-            // Dense canopy (high shade) spreads fire faster — crown fire
             spreadChance *= (1f + neighbor.shade);
 
-            // Fire-resistant trees are harder to ignite
             if (neighbor.CurrentObject is Tree tree)
             {
                 if (tree.data.fireResistant)
                     spreadChance *= 0.2f;
 
-                // Stressed trees are more flammable
                 spreadChance *= (1f + tree.stress * 0.5f);
             }
 
@@ -80,13 +73,11 @@ public class FireManager : MonoBehaviour
         }
     }
 
-    // Call this from UI or a game event to start a fire
     public bool StartFire(Soil soil)
     {
         return soil.Ignite();
     }
 
-    // Rain extinguishes fires
     public void OnRain()
     {
         foreach (Soil s in grid.GetAllSoils())

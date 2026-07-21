@@ -18,12 +18,10 @@ public class TutorialManager : MonoBehaviour
         Instance = this;
     }
 
-    // Call this anywhere — e.g. when player plants their first tree,
-    // when a fire starts for the first time, etc.
     public void TriggerTutorial(TutorialStep step)
     {
         if (step == null) return;
-        if (shownSteps.Contains(step.stepId)) return; // already seen
+        if (shownSteps.Contains(step.stepId)) return;
 
         shownSteps.Add(step.stepId);
         queue.Enqueue(step);
@@ -32,7 +30,6 @@ public class TutorialManager : MonoBehaviour
             ShowNext();
     }
 
-    // For manually triggering, e.g. from a "Help" button, ignoring the once-only rule
     public void ForceShow(TutorialStep step)
     {
         queue.Enqueue(step);
@@ -57,6 +54,6 @@ public class TutorialManager : MonoBehaviour
 
     private void OnStepClosed()
     {
-        ShowNext(); // show the next queued step, if any
+        ShowNext();
     }
 }

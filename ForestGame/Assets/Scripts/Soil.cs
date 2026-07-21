@@ -27,7 +27,7 @@ public class Soil : MonoBehaviour
 
     public bool isOnFire = false;
     [Range(0f, 1f)]
-    public float burnProgress = 0f;               // 0–1, tree dies at 1
+    public float burnProgress = 0f;             
     private const float burnRate = 0.12f;
     public bool recentlyOnFire = false;
     private int recentlyOnFireCounter = 0;
@@ -182,7 +182,7 @@ public class Soil : MonoBehaviour
     void OnMouseDown()
     {
         if (EventSystem.current.IsPointerOverGameObject()) return;
-        if (isLocked) return;  // can't interact with existing forest
+        if (isLocked) return;
 
         InteractionManager.Instance.Interact(this);
     }
@@ -219,7 +219,6 @@ public class Soil : MonoBehaviour
         isOnFire = true;
         burnProgress = 0f;
 
-        // Refresh overlay immediately instead of waiting for next day tick
         GetComponent<SoilOverlay>()?.Refresh();
 
         InteractionManager.Instance.firesStarted++;
@@ -244,7 +243,6 @@ public class Soil : MonoBehaviour
 
         if (!isOnFire) return;
 
-        // Dry soil and high shade (dense canopy) burn faster
         float rate = burnRate;
         rate *= (1f - moisture);
         rate *= (1f + shade * 0.5f);
@@ -259,9 +257,6 @@ public class Soil : MonoBehaviour
             Extinguish();
             recentlyOnFire = true;
             recentlyOnFireCounter = 0;
-
-            // Burnt soil loses moisture retention temporarily
-            //moistureRetention = Mathf.Max(0.3f, moistureRetention - 0.2f);
         }
     }
 

@@ -27,13 +27,14 @@ public class LevelData : ScriptableObject
     public class TreeRequirement
     {
         public TreeData treeType;
-        public int requiredMatureCount; // can be 0 if not required
+        public int requiredMatureCount;
     }
 
-    // Add to LevelData class:
     [Header("Win Condition")]
     public TreeRequirement[] treeRequirements;
-    public int timeLimitYears; // 0 = no limit
+    
+    //0 for no limit
+    public int timeLimitYears;
 
     [Header("Context")]
     public string levelName;
@@ -42,12 +43,10 @@ public class LevelData : ScriptableObject
     [Header("Audio")]
     public AudioClip backgroundMusic;
 
-    // Samples the mask texture to determine if a tile is in the player zone
     public bool IsPlayerZone(int x, int y)
     {
         if (zoneMask == null) return true;
 
-        // Map tile coords to texture pixel coords
         float u = (float)x / width;
         float v = (float)y / height;
 
@@ -56,7 +55,6 @@ public class LevelData : ScriptableObject
 
         Color pixel = zoneMask.GetPixel(px, py);
 
-        // White (or light) = player zone
         return pixel.r > 0.5f;
     }
 }

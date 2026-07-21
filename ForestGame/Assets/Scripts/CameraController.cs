@@ -33,7 +33,6 @@ public class CameraController : MonoBehaviour
         minY = bounds.min.y + camHalfH;
         maxY = bounds.max.y - camHalfH;
 
-        // If zone is smaller than viewport, lock camera to zone center
         if (minX > maxX) minX = maxX = bounds.center.x;
         if (minY > maxY) minY = maxY = bounds.center.y;
 

@@ -112,7 +112,6 @@ public class InteractionManager : MonoBehaviour
                 cursorPreview.transform.position = snapped;
                 cursorPreview.SetActive(true);
 
-                // Red tint when action isn't valid for this tile
                 bool invalid = currTool switch
                 {
                     ToolType.Plant => soil.HasObject || soil.recentlyOnFire,

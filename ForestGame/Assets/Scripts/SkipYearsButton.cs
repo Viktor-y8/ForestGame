@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class SkipYearsButton : MonoBehaviour
 {
     [SerializeField] private int yearsToSkip = 10;
-    [SerializeField] private GameObject loadingIndicator; // simple "Simulating..." panel
+    [SerializeField] private GameObject loadingIndicator;
 
     public void Awake()
     {

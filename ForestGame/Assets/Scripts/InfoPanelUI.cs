@@ -62,14 +62,12 @@ public class InfoPanelUI : MonoBehaviour
         Vector3 screenPos =
             cam.WorldToScreenPoint(currentSoil.transform.position);
 
-        // hide if behind camera
         if (screenPos.z < 0)
         {
             panel.SetActive(false);
             return;
         }
 
-        // check if outside screen
         bool offscreen =
             screenPos.x < 0 ||
             screenPos.x > Screen.width ||
@@ -111,7 +109,6 @@ public class InfoPanelUI : MonoBehaviour
             treeText.text = "No tree planted";
         }
 
-        //Force layout to recalculate immediately so the panel resizes to fit content
         LayoutRebuilder.ForceRebuildLayoutImmediate(panelRect);
     }
 

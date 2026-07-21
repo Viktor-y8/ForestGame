@@ -55,11 +55,9 @@ public class LevelManager : MonoBehaviour
         if (hasWon || currentLevel == null)
             return;
 
-        // If the player still has seeds, they can continue.
         if (InteractionManager.Instance.seedCount > 0)
             return;
 
-        // Check if any living tree still exists.
         foreach (Soil soil in GameManager.Instance.GetAllSoils())
         {
             if (soil.isLocked)
@@ -67,7 +65,6 @@ public class LevelManager : MonoBehaviour
 
             if (soil.CurrentObject is Tree tree && !tree.dead)
             {
-                // At least one living tree remains.
                 return;
             }
         }

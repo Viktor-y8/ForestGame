@@ -40,7 +40,7 @@ public class Grid
     public List<Soil> GetAllSoils()
     {
         List<Soil> all = new List<Soil>();
-        // Iterate your internal grid array and add all non-null Soil tiles
+
         foreach (Soil s in gridObjects)
         {
             if (s != null) all.Add(s);

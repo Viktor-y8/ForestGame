@@ -124,15 +124,15 @@ public class TimeManager : MonoBehaviour
         for (int i = 0; i < totalDays; i++)
         {
             day++;
-            OnDayPassed?.Invoke(); // moisture, stress, health all still run normally
+            OnDayPassed?.Invoke();
 
             if (day > 30)
             {
                 day = 1;
                 month++;
 
-                WeatherManager.Instance.GenerateWeatherSilent(); // no real fire spawn during skip
-                OnMonthPassed?.Invoke(); // tree growth still runs normally
+                WeatherManager.Instance.GenerateWeatherSilent();
+                OnMonthPassed?.Invoke();
 
                 if (month > 12)
                 {

@@ -20,7 +20,7 @@ public class Tree : TileObject
     private float requiredGrowthForMaturity;
 
     [Range(0f, 1f)]
-    public float stress = 0f; // 0 = no stress, 1 = maximum stress
+    public float stress = 0f;
     private const float stressHealthThreshold = 0.4f;
 
     public int AgeYears => ageMonths / 12;
@@ -66,14 +66,12 @@ public class Tree : TileObject
 
     private void AccumulateFireRisk()
     {
-        // Same factors that would make a real fire likely to ignite/spread here
         float dryness = 1f - soil.moisture;
         float fireResistanceFactor = data.fireResistant ? 0.2f : 1f;
         float stressFactor = 1f + stress * 0.5f;
 
         float dailyRisk = 0.00015f * dryness * fireResistanceFactor * stressFactor;
 
-        // Heatwave/drought seasons increase it — check current weather
         if (WeatherManager.Instance.currentWeather == WeatherType.Drought) dailyRisk *= 2f;
         if (WeatherManager.Instance.currentWeather == WeatherType.Heatwave) dailyRisk *= 3f;
 
@@ -117,9 +115,9 @@ public class Tree : TileObject
         float avgSeasonalMultiplier = (1.4f + 1.1f + 0.7f + 0.15f) / 4f;
 
         float perfectGrowthRate = 1f
-            * avgSeasonalMultiplier   // average season
-            * 1.15f                   // preferred soil
-            * 1f;                     // full health, no stress
+            * avgSeasonalMultiplier
+            * 1.15f
+            * 1f;
 
         int monthsToMaturity = data.minMaturityAgeYears * 12;
 
@@ -304,13 +302,11 @@ public class Tree : TileObject
 
         if (stress > stressHealthThreshold)
         {
-            // Damage scales with how far above the threshold stress is
             float stressOverflow = stress - stressHealthThreshold;
             healthChange -= stressOverflow * 0.01f;
         }
         else
         {
-            // Below threshold: recover, faster the closer to ideal (stress == 0)
             float recoveryRate = Mathf.Lerp(0.003f, 0.001f, stress / stressHealthThreshold);
             healthChange += recoveryRate;
         }
@@ -338,7 +334,6 @@ public class Tree : TileObject
 
         Destroy(gameObject);
 
-        //TODO: Spawn dead tree
     }
 
     private void OnDestroy()

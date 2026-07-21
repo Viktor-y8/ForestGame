@@ -13,7 +13,6 @@ public class TreeButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private void Awake()
     {
-        // Automatically use whatever parent holds the buttons
         buttonContainer = transform.parent.GetComponent<RectTransform>();
     }
 

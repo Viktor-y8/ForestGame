@@ -6,7 +6,6 @@ public class SoilOverlay : MonoBehaviour
     [SerializeField] private SpriteRenderer fireOverlay;
     [SerializeField] private SpriteRenderer waterWarningOverlay;
 
-    // Soil moisture below this shows the warning
     [SerializeField] private float lowMoistureThreshold = 0.2f;
 
     [Header("Bob Settings")]
@@ -16,14 +15,13 @@ public class SoilOverlay : MonoBehaviour
     private Soil soil;
     private Vector3 waterWarningBasePosition;
 
-    [SerializeField] private SpriteRenderer darknessOverlay;  // a black square sprite child
+    [SerializeField] private SpriteRenderer darknessOverlay;
 
     public void SetDarkness(float amount)
     {
         if (darknessOverlay != null)
             darknessOverlay.color = new Color(0f, 0f, 0f, amount);
 
-        // Also darken the tree sprite so it doesn't bleed over the darkness
         if (soil.CurrentObject != null)
         {
             SpriteRenderer treeSr = soil.CurrentObject.GetComponent<SpriteRenderer>();
