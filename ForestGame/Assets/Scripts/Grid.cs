@@ -1,5 +1,4 @@
 using UnityEditor;
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;

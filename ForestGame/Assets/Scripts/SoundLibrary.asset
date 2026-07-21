@@ -30,4 +30,4 @@ MonoBehaviour:
   - name: winSFX
     clip: {fileID: 8300000, guid: ca5aff753f896de4196cba1c8feb0c70, type: 3}
   - name: loseSFX
-    clip: {fileID: 8300000, guid: cbd71d652b08aac49b69c05ebfdd9a78, type: 3}
+    clip: {fileID: 8300000, guid: b76b0aa69408b424eac990f0d8d9b3e7, type: 3}
