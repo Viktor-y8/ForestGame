@@ -330,8 +330,6 @@ public class Tree : TileObject
 
         soil.RemoveObject();
 
-        InteractionManager.Instance.treesDied++;
-
         Destroy(gameObject);
 
     }

@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,11 +11,12 @@ public class TreeTooltipUI : MonoBehaviour
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text statsText;
 
-    // Fixed screen position — set in inspector to sit next to your button column
     [SerializeField] private float fixedScreenX = 500f;
     [SerializeField] private float fixedScreenY = 640f;
 
     [SerializeField] private RectTransform panelRect;
+
+    [SerializeField] private Canvas canvas;
 
     private void Awake()
     {
@@ -22,78 +24,135 @@ public class TreeTooltipUI : MonoBehaviour
         Hide();
     }
 
-    private void Display(RectTransform container)
+    private void Display(RectTransform container, bool useOwnPosition = false)
     {
-
-        if (TutorialManager.IsTutorialActive) return;
-
         panel.SetActive(true);
         Canvas.ForceUpdateCanvases();
 
-        float totalY = 0f;
-        int count = 0;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(panelRect);
 
-        foreach (RectTransform child in container)
+        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+        Camera uiCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+
+        Vector2 screenPoint;
+        Vector3[] ownCorners = null;
+
+        if (!useOwnPosition)
         {
-            if (!child.gameObject.activeInHierarchy || child.GetComponent<TMPro.TMP_Text>() != null) continue;
+            float totalY = 0f;
+            int count = 0;
 
-            Vector3[] corners = new Vector3[4];
-            child.GetWorldCorners(corners);
-            totalY += (corners[0].y + corners[1].y) / 2f;
-            count++;
-        }
+            foreach (RectTransform child in container)
+            {
+                if (!child.gameObject.activeInHierarchy) continue;
+                Vector3[] corners = new Vector3[4];
+                child.GetWorldCorners(corners);
+                totalY += (corners[0].y + corners[1].y) / 2f;
+                count++;
+            }
 
-        float centerY;
-        float centerX;
-
-        if (count > 0)
-        {
-            // Grouped buttons — use fixed X as before
-            centerY = totalY / count;
-            centerX = fixedScreenX;
+            float centerY = count > 0 ? totalY / count : Screen.height / 2f;
+            screenPoint = new Vector2(fixedScreenX, centerY);
         }
         else
         {
-            // Standalone button — position relative to the button
-            Vector3[] ownCorners = new Vector3[4];
+            ownCorners = new Vector3[4];
             container.GetWorldCorners(ownCorners);
-            centerY = (ownCorners[0].y + ownCorners[1].y) / 2f;
 
-            float panelWidth = panelRect.rect.width;
-            float rightX = ownCorners[2].x + panelWidth / 2f;
-            float leftX = ownCorners[0].x - panelWidth / 2f;
+            float centerY = (ownCorners[0].y + ownCorners[1].y) / 2f;
+            float actualPanelWidth = panelRect.rect.width;
+            float gap = 320f;
 
-            // Check if placing to the right goes off screen
-            if (rightX + panelWidth / 2f > Screen.width)
-                centerX = leftX;
-            else
-                centerX = rightX;
+            float buttonCenterXScreen = (ownCorners[0].x + ownCorners[2].x) / 2f;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvasRect, new Vector2(buttonCenterXScreen, 0f), uiCamera, out Vector2 buttonCenterLocal);
+
+            bool isOnRightHalf = buttonCenterLocal.x > 0f;
+
+            float targetX = isOnRightHalf
+                ? ownCorners[0].x - actualPanelWidth / 2f - gap
+                : ownCorners[2].x + actualPanelWidth / 2f + gap;
+
+            screenPoint = new Vector2(targetX, centerY);
         }
 
-        panel.transform.position = new Vector3(centerX, centerY, 0f);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRect, screenPoint, uiCamera, out Vector2 localPoint
+        );
+
+        localPoint = ClampToCanvas(localPoint, ownCorners);
+
+        panelRect.anchoredPosition = localPoint;
     }
 
-    public void Show(TreeData data, RectTransform container)
+    private Vector2 ClampToCanvas(Vector2 desiredPosition, Vector3[] buttonCorners)
+    {
+        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+        Camera uiCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+
+        float panelHalfWidth = panelRect.rect.width / 2f;
+        float panelHalfHeight = panelRect.rect.height / 2f;
+
+        float canvasHalfWidth = canvasRect.rect.width / 2f;
+        float canvasHalfHeight = canvasRect.rect.height / 2f;
+
+        float screenPadding = 20f;
+
+        float minX = -canvasHalfWidth + panelHalfWidth + screenPadding;
+        float maxX = canvasHalfWidth - panelHalfWidth - screenPadding;
+        float minY = -canvasHalfHeight + panelHalfHeight + screenPadding;
+        float maxY = canvasHalfHeight - panelHalfHeight - screenPadding;
+
+        desiredPosition.y = Mathf.Clamp(desiredPosition.y, minY, maxY);
+
+        if (buttonCorners == null)
+        {
+            desiredPosition.x = Mathf.Clamp(desiredPosition.x, minX, maxX);
+            return desiredPosition;
+        }
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRect, buttonCorners[0], uiCamera, out Vector2 buttonLeftLocal);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRect, buttonCorners[2], uiCamera, out Vector2 buttonRightLocal);
+
+        bool isPlacedRightOfButton = desiredPosition.x > buttonRightLocal.x;
+
+        if (isPlacedRightOfButton)
+        {
+            float hardMinX = buttonRightLocal.x + screenPadding;
+            desiredPosition.x = Mathf.Max(desiredPosition.x, hardMinX);
+            desiredPosition.x = Mathf.Min(desiredPosition.x, maxX);
+        }
+        else
+        {
+            float hardMaxX = buttonLeftLocal.x - screenPadding;
+            desiredPosition.x = Mathf.Min(desiredPosition.x, hardMaxX);
+            desiredPosition.x = Mathf.Max(desiredPosition.x, minX);
+        }
+
+        return desiredPosition;
+    }
+
+    public void Show(TreeData data, RectTransform container, bool useOwnPosition = false)
     {
         nameText.text = data.treeName;
         statsText.text =
             $"Matures in: {data.minMaturityAgeYears}–{data.maxMaturityAgeYears} years\n" +
             $"Max age: {data.maxAgeYears} years\n" +
-            //$"Preferred soil: {data.preferredSoil}\n" +
             $"Drought resistance: {(data.droughtResistance * 100f):0}%\n" +
             $"Shade tolerance: {(data.shadeTolerance * 100f):0}%\n" +
             $"Moisture usage: {(data.moistureUsage * 100f):0}%\n" +
             $"Spread chance: {(data.spreadChance * 100f):0}%\n";
-            //$"Biodiversity value: {(data.biodiversityValue * 100f):0}%\n";
 
-        Display(container);
+        Display(container, useOwnPosition);
     }
 
-    public void Show(string title, string description, RectTransform container)
+    public void Show(string title, string description, RectTransform container, bool useOwnPosition = false)
     {
         nameText.text = title;
         statsText.text = description;
-        Display(container);
+        Display(container, useOwnPosition);
     }
 
     public void Hide()

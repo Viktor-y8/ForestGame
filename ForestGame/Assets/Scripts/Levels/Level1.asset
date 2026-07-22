@@ -25,7 +25,7 @@ MonoBehaviour:
   seedCount: 9
   treeRequirements:
   - treeType: {fileID: 11400000, guid: 49138b779bf3d0b4fb2b918496337ad9, type: 2}
-    requiredMatureCount: 1
+    requiredMatureCount: 21
   timeLimitYears: 0
   levelName: Level 1 - Maple Forest
   levelDescription: There is a danger of a landslide so it is your job to fill this

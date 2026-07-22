@@ -50,7 +50,7 @@ public class ToolButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (TreeTooltipUI.Instance == null) return;
-        TreeTooltipUI.Instance.Show(toolName, toolDescription, buttonContainer);
+        TreeTooltipUI.Instance.Show(toolName, toolDescription, buttonContainer, useOwnPosition);
     }
 
     public void OnPointerExit(PointerEventData eventData)
