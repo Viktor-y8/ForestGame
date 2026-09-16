@@ -2,59 +2,50 @@
 
 public class TreeOverlay : MonoBehaviour
 {
-    [SerializeField] private SpriteRenderer skullOverlay;
-    [SerializeField] private float lowHealthThreshold = 0.25f;
+    [SerializeField] private SpriteRenderer eventIcon;
+    [SerializeField] private Sprite pestSprite;
+    [SerializeField] private Sprite diseaseSprite;
 
     [Header("Bob Settings")]
     [SerializeField] private float bobAmplitude = 0.06f;
     [SerializeField] private float bobSpeed = 2f;
 
     private Tree tree;
-    private Vector3 skullBasePosition;
-    private bool basePositionSet = false;
+    private Vector3 basePosition;
+    private bool basePositionSet;
 
-    private void Awake()
+    [SerializeField] private float heightOffset = 0.9f;
+
+    private void Awake() => tree = GetComponentInParent<Tree>();
+    private void Start() => Refresh();
+
+    public void RefreshPosition()
     {
-        tree = GetComponent<Tree>();
-    }
-
-    private void Start()
-    {
-        TimeManager.Instance.OnDayPassed += Refresh;
-        Refresh();
-    }
-
-    public void RefreshSkullPosition()
-    {
-        SpriteRenderer treeSprite = GetComponent<SpriteRenderer>();
-        if (treeSprite == null || treeSprite.sprite == null) return;
-
-        Bounds bounds = treeSprite.sprite.bounds;
-
-        skullBasePosition = new Vector3(bounds.max.x, bounds.max.y, 0f);
-        skullOverlay.transform.localPosition = skullBasePosition;
+        basePosition = new Vector3(0f, heightOffset, 0f);
+        eventIcon.transform.localPosition = basePosition;
         basePositionSet = true;
     }
 
-    private void Refresh()
+    public void Refresh()
     {
-        skullOverlay.enabled = !tree.dead && tree.health < lowHealthThreshold && !tree.isImmune;
+        if (!basePositionSet) RefreshPosition();
 
-        if (!basePositionSet)
-            RefreshSkullPosition();
+        if (tree.dead) { eventIcon.enabled = false; return; }
+
+        if (tree.hasDisease) { eventIcon.enabled = true; eventIcon.sprite = diseaseSprite; }
+        else if (tree.hasPest) { eventIcon.enabled = true; eventIcon.sprite = pestSprite; }
+        else { eventIcon.enabled = false; }
     }
 
     private void Update()
     {
-        if (!skullOverlay.enabled) return;
-
+        if (!eventIcon.enabled) return;
         float bob = Mathf.Sin(Time.time * bobSpeed) * bobAmplitude;
-        skullOverlay.transform.localPosition = skullBasePosition + new Vector3(0f, bob, 0f);
+        eventIcon.transform.localPosition = basePosition + new Vector3(0f, bob, 0f);
     }
 
-    private void OnDestroy()
+    private void LateUpdate()
     {
-        if (TimeManager.Instance != null)
-            TimeManager.Instance.OnDayPassed -= Refresh;
+        eventIcon.sortingOrder = Mathf.RoundToInt(-tree.transform.position.y * 100) + 30;
     }
 }

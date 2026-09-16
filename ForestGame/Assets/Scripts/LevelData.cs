@@ -12,13 +12,11 @@ public class LevelData : ScriptableObject
     public Texture2D zoneMask;
 
     [Header("Player Zone Soil")]
-    public SoilType zoneSoilType;
     [Range(0f, 1f)] public float zoneMoisture = 0.5f;
     public float zoneMoistureRetention = 1f;
 
     [Header("Border Forest")]
     public TreeData[] borderTreePool;
-    public SoilType borderSoilType;
     [Range(0f, 1f)] public float borderMoisture = 0.6f;
 
     public int seedCount;

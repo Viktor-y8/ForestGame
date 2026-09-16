@@ -16,8 +16,8 @@ MonoBehaviour:
   spreadChance: 0.35
   oldAgeStartYears: 250
   maxAgeYears: 400
-  minMaturityAgeYears: 15
-  maxMaturityAgeYears: 25
+  minMaturityAgeYears: 25
+  maxMaturityAgeYears: 30
   seedlingAge: 1
   saplingAge: 4
   youngTreeAge: 12

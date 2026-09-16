@@ -72,7 +72,7 @@ public class Grid
         return neighbors.ToArray();
     }
 
-    public void RefreshNeighbors(Soil center)
+   /* public void RefreshNeighbors(Soil center)
     {
         center.RefreshLocalEnvironment();
 
@@ -85,7 +85,7 @@ public class Grid
                 s.RefreshLocalEnvironment();
             }
         }
-    }
+    }*/
 
     public Vector3 GetSnappedPosition(Vector3 worldPos)
     {

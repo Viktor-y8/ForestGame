@@ -3,34 +3,26 @@ using UnityEngine.EventSystems;
 
 public class Soil : MonoBehaviour
 {
-    public SoilType type;
-    
     private TileObject currentObject;
     public GameObject treePrefab;
     public GameObject ditchPrefab;
+    public GameObject weedPrefab;
 
-    public event System.Action<SoilType> OnSoilChanged;
-    
     public int x;
     public int y;
     public Grid grid;
 
-    [Range(0f, 1f)]
-    public float moisture = 0.5f;
-
-    public float moistureRetention = 1f;
-
-    public float fertility = 0.5f;
+    //0 - not fertilized, 1 - medium fertlized, 2 - fully fertilized
+    public int fertilized = 0;
+    public bool isFertilized = false;
+    public bool isWatered = false;
 
     [Range(0f, 1f)]
     public float shade = 0f;
 
     public bool isOnFire = false;
-    [Range(0f, 1f)]
-    public float burnProgress = 0f;             
-    private const float burnRate = 0.12f;
-    public bool recentlyOnFire = false;
-    private int recentlyOnFireCounter = 0;
+    public bool isScarred = false;
+
     public bool isLocked = false;
 
     [SerializeField]
@@ -41,117 +33,56 @@ public class Soil : MonoBehaviour
     [SerializeField] private TutorialStep firstFireTutorial;
 
     public AudioClip fireLoopClip;
-    public void RecentFireCountUp() 
-    {
-        if (recentlyOnFire)
-        {
-            recentlyOnFireCounter++;
-            this.GetComponent<SpriteRenderer>().sprite = burntSprite;
-        }
-        if (recentlyOnFireCounter >= 30)
-        {
-            GetComponent<SpriteRenderer>().sprite = soilSprite;
-            recentlyOnFire = false;
 
-        }
-    }
+    public event System.Action OnStateChanged;
+    private void NotifyChanged() => OnStateChanged?.Invoke();
+
     public bool HasObject => currentObject != null;
+    public void Water() {
+        isWatered = true;
+        NotifyChanged();
+    }
+
+    public void Fertilize() { 
+        fertilized = Mathf.Clamp(fertilized + 1, 0, 2);
+        isFertilized = true;
+        NotifyChanged();
+    }
 
     public TileObject CurrentObject => currentObject;
 
-    private void Start()
+    public void ResolveTreeGrowth()
     {
-        TimeManager.Instance.OnDayPassed += UpdateMoisture;
-        TimeManager.Instance.OnDayPassed += RecentFireCountUp;
-    }
-
-    private void UpdateMoisture()
-    {
-        Tree tree = CurrentObject is Tree treeObj ? treeObj : null;
-
-        if (tree != null && tree.isMature)
+        if (currentObject is Tree tree)
         {
-            moisture += 0.001f;
+            tree.ResolveRound();
         }
-
-        WeatherType weather = WeatherManager.Instance.currentWeather;
-
-        float change = 0f;
-
-        switch (weather)
-        {
-            case WeatherType.Rain:
-                change = 0.015f;
-                break;
-
-            case WeatherType.Drought:
-                change = -0.008f;
-                break;
-
-            case WeatherType.Heatwave:
-                change = -0.015f;
-                break;
-
-            case WeatherType.Normal:
-                change = -0.002f;
-                break;
-        }
-
-        moisture += change * moistureRetention;
-
-        int nearbyTrees = 0;
-
-        foreach (Soil s in grid.Adjacent(this))
-        {
-            if (s.CurrentObject is Tree treeAdj && treeAdj.isMature)
-            {
-                nearbyTrees++;
-            }
-        }
-
-        moisture += nearbyTrees * 0.0005f;
-
-
-        moisture = Mathf.Clamp01(moisture);
     }
 
-    public void Water(float amount)
+    public void MarkScarred()
     {
-        float effectiveAmount = amount * moistureRetention;
-        moisture = Mathf.Clamp01(moisture + effectiveAmount);
+        isScarred = true;
+        GetComponent<SpriteRenderer>().sprite = burntSprite;
+        NotifyChanged();
     }
 
-    public void UpdateShade()
+    public void ClearScar()
     {
-        shade = 0f;
-
-        Soil[] neighbors = grid.Adjacent(this);
-
-        foreach (Soil s in neighbors)
-        {
-            if (s == null || !s.HasObject) continue;
-
-            Tree tree = s.CurrentObject as Tree;
-
-            if (tree == null) continue;
-
-            if (tree.isMature)
-            {
-                shade += 0.2f;
-            }
-            else if(tree.AgeYears >= tree.data.saplingAge)
-            {
-                shade += 0.1f;
-            }
-        }
-
-        shade = Mathf.Clamp01(shade);
+        if (!isScarred) return;
+        isScarred = false;
+        GetComponent<SpriteRenderer>().sprite = soilSprite;
+        NotifyChanged();
     }
-    
-    public void RefreshLocalEnvironment()
+
+    public void ResolveSoilState()
     {
-        UpdateShade();
+        fertilized = Mathf.Clamp(fertilized - 1, 0, 2);
+        isFertilized = false;
+        isWatered = false;
+
+        NotifyChanged();
     }
+
 
     public void PlantTree(TreeData treeData)
     {
@@ -165,8 +96,6 @@ public class Soil : MonoBehaviour
         tree.Initialize(this, treeData);
 
         currentObject = tree;
-
-        grid.RefreshNeighbors(this);
     }
     
     public void PlantDitch()
@@ -179,6 +108,16 @@ public class Soil : MonoBehaviour
         currentObject = ditch;
     }
 
+    public void PlantWeed()
+    {
+        if (HasObject) return;
+
+        GameObject obj = Instantiate(weedPrefab, transform.position, Quaternion.identity);
+        Weed weed = obj.GetComponent<Weed>();
+        weed.Initialize(this);
+        currentObject = weed;
+    }
+
     void OnMouseDown()
     {
         if (EventSystem.current.IsPointerOverGameObject()) return;
@@ -187,16 +126,12 @@ public class Soil : MonoBehaviour
         InteractionManager.Instance.Interact(this);
     }
 
-    public void ChangeSoil(SoilType newType)
-    {
-        type = newType;
-        OnSoilChanged?.Invoke(type);
-    }
     public bool RemoveObject()
     {
         if (currentObject == null) return false;
 
-        InteractionManager.Instance.treesDied++;
+        bool wasTree = currentObject is Tree;
+        if (wasTree) InteractionManager.Instance.treesDied++;
 
         bool shouldReturnSeed = currentObject is Tree tree && tree.justPlanted;
 
@@ -204,67 +139,76 @@ public class Soil : MonoBehaviour
 
         currentObject = null;
 
-        grid.RefreshNeighbors(this);
+        if (wasTree) LevelManager.Instance.CheckLossImmediate();
 
         return shouldReturnSeed;
     }
 
     public bool Ignite()
     {
-        if (isOnFire || moisture > 0.6f || recentlyOnFire) return false;
+        if (isOnFire) return false;
         if (CurrentObject is Ditch) return false;
-
-        TutorialManager.Instance.TriggerTutorial(firstFireTutorial);
+        if (CurrentObject is Tree t && t.isImmune) return false;
 
         isOnFire = true;
-        burnProgress = 0f;
-
-        GetComponent<SoilOverlay>()?.Refresh();
+        NotifyChanged();
 
         InteractionManager.Instance.firesStarted++;
-
         SoundManager.Instance.PlaySFX("fireSFX", 1f, 0.1f);
         SoundManager.Instance.PlayLoopingSFX(this, fireLoopClip, transform.position);
 
         return true;
     }
 
+    private void OnMouseEnter()
+    {
+        if (RoundManager.Instance.Phase != GamePhase.Planning) return;
+
+        if (!InteractionManager.Instance.hasSelectedTool() && CurrentObject is Tree tree && !tree.isImmune && !isOnFire && !tree.hasPest && !tree.hasDisease)
+        {
+            tree.GetComponent<TreeForecastLabel>()?.Show(
+                tree.health * 100f, tree.PredictedHealthDeltaPercent(), tree.WillDieNextRound());
+        }
+
+        ToolType? hintTool = GetHintTool();
+        if (hintTool.HasValue && CurrentObject is Tree hintTree)
+            hintTree.GetComponent<ToolHintIcon>()?.Show(hintTool.Value);
+        if (hintTool.HasValue && CurrentObject is Weed weed)
+            weed.GetComponent<ToolHintIcon>()?.Show(hintTool.Value);
+    }
+
+    private void OnMouseExit()
+    {
+        if (CurrentObject is Tree tree)
+        {
+            tree.GetComponent<TreeForecastLabel>()?.Hide();
+            tree.GetComponent<ToolHintIcon>()?.Hide();
+        }
+        if (CurrentObject is Weed weed)
+        {
+            weed.GetComponent<ToolHintIcon>()?.Hide();
+        }
+    }
+
+    public ToolType? GetHintTool()
+    {
+        if (isOnFire) return ToolType.Water;
+        if (CurrentObject is Tree tree)
+        {
+            if(tree.hasDisease)return ToolType.Remove;
+            if (tree.hasPest)return ToolType.Pesticide;
+        }
+        if (CurrentObject is Weed) return ToolType.Remove;
+
+        return null;
+    }
+
     public void Extinguish()
     {
         isOnFire = false;
-        burnProgress = 0f;
 
         SoundManager.Instance.StopLoopingSFX(this);
-    }
 
-    public void UpdateFire()
-    {
-        if(moisture >= 0.8) Extinguish();
-
-        if (!isOnFire) return;
-
-        float rate = burnRate;
-        rate *= (1f - moisture);
-        rate *= (1f + shade * 0.5f);
-
-        if (!HasObject) rate *= 1.2f;
-
-        burnProgress += rate;
-
-        if (burnProgress >= 1f)
-        {
-            if (HasObject) RemoveObject();
-            Extinguish();
-            recentlyOnFire = true;
-            recentlyOnFireCounter = 0;
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (TimeManager.Instance != null)
-        {
-            TimeManager.Instance.OnDayPassed -= UpdateMoisture;
-        }
+        NotifyChanged();
     }
 }

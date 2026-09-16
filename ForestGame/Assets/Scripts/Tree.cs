@@ -17,11 +17,6 @@ public class Tree : TileObject
     public int ageMonths = 0;
     public float growthProgress = 0f;
     private TreeStage currentStage;
-    private float requiredGrowthForMaturity;
-
-    [Range(0f, 1f)]
-    public float stress = 0f;
-    private const float stressHealthThreshold = 0.4f;
 
     public int AgeYears => ageMonths / 12;
     public bool isMature => currentStage == TreeStage.Mature;
@@ -29,7 +24,8 @@ public class Tree : TileObject
     public bool canPlant = true;
     public bool isImmune = false;
 
-    private float accumulatedFireRisk = 0;
+    public bool hasDisease = false;
+    public bool hasPest = false;
 
     private void Awake()
     {
@@ -44,114 +40,83 @@ public class Tree : TileObject
 
         spriteRenderer.sprite = data.growthStages[0];
 
-        soil.OnSoilChanged += HandleSoilChanged;
-
         justPlanted = true;
         currentStage = TreeStage.Seed;
-
-        requiredGrowthForMaturity = CalculateMinGrowth();
-
-        TimeManager.Instance.OnDayPassed += DailyUpdate;
-        TimeManager.Instance.OnMonthPassed += MonthlyUpdate;
-    }
-    private void DailyUpdate()
-    {
-        ConsumeMoisture();
-        CalculateStress();
-        UpdateHealth();
-
-        if (TimeManager.IsFastForwarding)
-            AccumulateFireRisk();
     }
 
-    private void AccumulateFireRisk()
+    public void ResolveRound()
     {
-        float dryness = 1f - soil.moisture;
-        float fireResistanceFactor = data.fireResistant ? 0.2f : 1f;
-        float stressFactor = 1f + stress * 0.5f;
+        float stress = CalculateStress();
+        UpdateHealth(stress);
 
-        float dailyRisk = 0.00015f * dryness * fireResistanceFactor * stressFactor;
-
-        if (WeatherManager.Instance.currentWeather == WeatherType.Drought) dailyRisk *= 2f;
-        if (WeatherManager.Instance.currentWeather == WeatherType.Heatwave) dailyRisk *= 3f;
-
-        accumulatedFireRisk += dailyRisk;
-    }
-
-    public void ResolveFireRisk()
-    {
-        if (Random.value < accumulatedFireRisk)
-        {
-            InteractionManager.Instance.firesStarted++;
-            Die();
-        }
-
-        accumulatedFireRisk = 0f;
-    }
-
-    private void ConsumeMoisture()
-    {
-        soil.moisture -= data.moistureUsage * 0.001f;
-
-        soil.moisture = Mathf.Clamp01(soil.moisture);
-    }
-
-    private void MonthlyUpdate()
-    {
-        ageMonths++;
-
-        Grow();
-
+        ageMonths += 120;
         UpdateGrowthStage();
-
         CheckNaturalDeath();
 
-        if (currentStage == TreeStage.Mature && canPlant)
-            PlantToAdjacent();
+        if (!dead && isMature) PlantToAdjacent();
+
+        justPlanted = false;
     }
 
-    private float CalculateMinGrowth()
+    private float CalculateStress()
     {
-        float avgSeasonalMultiplier = (1.4f + 1.1f + 0.7f + 0.15f) / 4f;
+        float stress = 0;
 
-        float perfectGrowthRate = 1f
-            * avgSeasonalMultiplier
-            * 1.15f
-            * 1f;
-
-        int monthsToMaturity = data.minMaturityAgeYears * 12;
-
-        return perfectGrowthRate * monthsToMaturity;
-    }
-
-    private void HandleSoilChanged(SoilType newType)
-    {
-        
-    }
-
-    private void Grow()
-    {
-        if (currentStage == TreeStage.Mature) return;
-        if (dead) return;
-
-        float growthRate = 1f;
-
-        switch (TimeManager.Instance.CurrentSeason)
+        if (!isMature)
         {
-            case Season.Spring: growthRate *= 1.4f; break;
-            case Season.Summer: growthRate *= 1.1f; break;
-            case Season.Autumn: growthRate *= 0.7f; break;
-            case Season.Winter: growthRate *= 0.15f; break;
+            stress += soil.fertilized switch
+            {
+                0 => 0.2f,
+                1 => 0.05f,
+                _ => -0.1f,
+            };
+
+            stress += soil.isWatered ? -0.1f : 0.3f;
+        }
+        else
+        {
+            stress += soil.fertilized switch
+            {
+                0 => 0.15f,
+                1 => 0.05f,
+                _ => -0.1f,
+            };
+
+            stress += soil.isWatered ? -0.1f : 0.2f;
         }
 
-        if (AgeYears > data.oldAgeStartYears)
-        {
-            growthRate *= 0.7f;
-        }
+        return stress;
+    }
 
-        growthRate *= (1f - stress);
+    public void TakeDamage(float amount)
+    {
+        if (dead || isImmune) return;
+        health = Mathf.Clamp01(health - amount);
+        GetComponent<TreeOverlay>()?.Refresh();
+        if (health <= healthEpsilon) Die();
+    }
 
-        growthProgress += growthRate;
+    public float PredictedHealthDeltaPercent()
+    {
+        float stress = CalculateStress();
+        if (hasPest) stress += RoundManager.Instance.pestRoundEndDamage;
+
+        float predictedHealth = Mathf.Clamp01(health - stress);
+        return (predictedHealth - health) * 100f;
+    }
+
+    public bool WillDieNextRound()
+    {
+        float stress = CalculateStress();
+        if (hasPest) stress += RoundManager.Instance.pestRoundEndDamage;
+
+        float predictedHealth = Mathf.Clamp01(health - stress);
+        if (predictedHealth <= healthEpsilon) return true;
+
+        int predictedAgeYears = (ageMonths + 120) / 12;
+        if (predictedAgeYears >= data.maxAgeYears) return true;
+
+        return false;
     }
 
     private void UpdateGrowthStage()
@@ -163,12 +128,18 @@ public class Tree : TileObject
 
         int age = AgeYears;
 
-        bool mature =
-            (
-            growthProgress >= requiredGrowthForMaturity
-            &&
-            AgeYears >= data.minMaturityAgeYears
-            );
+        bool mature = false;
+
+        if (age >= data.minMaturityAgeYears && age <= data.maxMaturityAgeYears)
+        {
+            mature = Random.value < 0.5;    
+        }
+        else if (age > data.maxMaturityAgeYears)
+        {
+            mature = true;
+        }
+
+        mature = mature && AgeYears >= data.minMaturityAgeYears;
 
         if (mature)
         {
@@ -188,28 +159,17 @@ public class Tree : TileObject
         }
 
         spriteRenderer.sprite = data.growthStages[(int)currentStage];
-        GetComponent<TreeOverlay>()?.RefreshSkullPosition();
-
-        bool gainedShade =
-            (previousStage == TreeStage.Sapling && currentStage == TreeStage.Young)
-            ||
-            (previousStage == TreeStage.Young && currentStage == TreeStage.Mature);
-
-        if (gainedShade)
-        {
-            soil.grid.RefreshNeighbors(soil);
-        }
-
+        GetComponent<TreeOverlay>()?.RefreshPosition();
+        GetComponent<TreeForecastLabel>()?.RefreshPosition();
+        GetComponent<ToolHintIcon>()?.RefreshPosition();
     }
 
     public void ForceSetMature()
     {
         ageMonths = data.minMaturityAgeYears * 12;
-        growthProgress = requiredGrowthForMaturity;
         currentStage = TreeStage.Mature;
         spriteRenderer.sprite = data.growthStages[(int)TreeStage.Mature];
         health = 1f;
-        stress = 0f;
     }
 
     private void CheckNaturalDeath()
@@ -236,7 +196,7 @@ public class Tree : TileObject
             float deathChance =
                 currentAge / ageRange;
 
-            if (Random.value < deathChance * 0.01f)
+            if (Random.value < deathChance * 0.35f)
             {
                 Die();
             }
@@ -268,83 +228,28 @@ public class Tree : TileObject
         InteractionManager.Instance.treesPlanted++;
     }
 
-    private void CalculateStress()
-    {
-        float targetStress = 0f;
-
-        if (soil.moisture < data.minimumMoisture)
-        {
-            float moistureStress = 1f - (soil.moisture / data.minimumMoisture);
-            targetStress += Mathf.Clamp01(moistureStress * (1f - data.droughtResistance));
-        }
-
-        if (soil.shade > data.shadeTolerance)
-        {
-            targetStress += Mathf.Clamp01(soil.shade - data.shadeTolerance);
-        }
-
-        if (soil.type != data.preferredSoil)
-        {
-            targetStress += 0.15f;
-        }
-
-        targetStress = Mathf.Clamp01(targetStress);
-
-        float driftRate = targetStress > stress ? 0.06f : 0.02f;
-        stress = Mathf.MoveTowards(stress, targetStress, driftRate);
-    }
-
-    private void UpdateHealth()
+    private const float healthEpsilon = 0.001f;
+    private void UpdateHealth(float stress)
     {
         if (dead || isImmune) return;
 
-        float healthChange = 0f;
+        health = Mathf.Clamp01(health - stress);
 
-        if (stress > stressHealthThreshold)
-        {
-            float stressOverflow = stress - stressHealthThreshold;
-            healthChange -= stressOverflow * 0.01f;
-        }
-        else
-        {
-            float recoveryRate = Mathf.Lerp(0.003f, 0.001f, stress / stressHealthThreshold);
-            healthChange += recoveryRate;
-        }
+        GetComponent<TreeOverlay>()?.Refresh();
 
-        health = Mathf.Clamp01(health + healthChange);
-
-        if (health <= 0f)
+        if (health <= healthEpsilon)
         {
             Die();
         }
     }
 
-    private void Die()
+    public void Die()
     {
 
         if (isImmune) return;
 
         dead = true;
 
-        CancelInvoke();
-
         soil.RemoveObject();
-
-        Destroy(gameObject);
-
-    }
-
-    private void OnDestroy()
-    {
-        if (TimeManager.Instance != null)
-        {
-            TimeManager.Instance.OnDayPassed -= DailyUpdate;
-            TimeManager.Instance.OnMonthPassed -= MonthlyUpdate;
-        }
-
-        if (soil != null)
-        {
-            soil.OnSoilChanged -= HandleSoilChanged;
-        }
     }
 }

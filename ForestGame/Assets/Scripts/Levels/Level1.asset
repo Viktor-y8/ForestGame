@@ -15,12 +15,10 @@ MonoBehaviour:
   width: 23
   height: 16
   zoneMask: {fileID: 2800000, guid: 71aa5cc8a30c172459be7cb5c54ce3b0, type: 3}
-  zoneSoilType: 0
   zoneMoisture: 0.5
   zoneMoistureRetention: 1
   borderTreePool:
   - {fileID: 11400000, guid: 49138b779bf3d0b4fb2b918496337ad9, type: 2}
-  borderSoilType: 0
   borderMoisture: 1
   seedCount: 9
   treeRequirements:

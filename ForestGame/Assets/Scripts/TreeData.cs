@@ -22,9 +22,6 @@ public class TreeData : ScriptableObject
     public int saplingAge;
     public int youngTreeAge;
 
-    [Header("Ecology")]
-    public SoilType preferredSoil;
-
     [Range(0f, 1f)]
     public float droughtResistance;
 
@@ -33,17 +30,6 @@ public class TreeData : ScriptableObject
 
     [Range(0f, 1f)]
     public float biodiversityValue;
-
-    [Range(0f, 1f)]
-    public float moistureUsage;
-
-    [Range(0f, 1f)]
-    public float minimumMoisture;
-
-    [Header("Gameplay")]
-    public bool improvesSoil;
-    public bool fireResistant;
-    public bool diseaseResistant;
 
     [Header("Visuals")]
     public Sprite[] growthStages;

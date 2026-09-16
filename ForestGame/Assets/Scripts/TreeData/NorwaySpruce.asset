@@ -17,7 +17,7 @@ MonoBehaviour:
   oldAgeStartYears: 200
   maxAgeYears: 300
   minMaturityAgeYears: 30
-  maxMaturityAgeYears: 45
+  maxMaturityAgeYears: 50
   seedlingAge: 1
   saplingAge: 4
   youngTreeAge: 15
