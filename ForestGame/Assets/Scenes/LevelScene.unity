@@ -580,8 +580,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Trees Planted: \nTrees Died:\nFires Started:\nWater tool used:\nDitches
-    used:"
+  m_text: "Trees Planted: \nTrees Died:\nFires Started:\nWater tool used:\nFertilizer
+    used:\nBeetle Infestations stopped: "
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -647,7 +647,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -0.8147812, y: 0.36690044, z: -1.1150129, w: -0.359581}
+  m_margin: {x: -0.8147812, y: -8.251191, z: -1.1150129, w: 10.608913}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -837,13 +837,13 @@ MonoBehaviour:
     hotspot: {x: 0, y: 0}
   - type: 2
     cursorTexture: {fileID: 2800000, guid: 842323000e5ed164ca5f968238624bf4, type: 3}
-    hotspot: {x: 12, y: 36}
+    hotspot: {x: 9, y: 27}
   - type: 3
     cursorTexture: {fileID: 2800000, guid: 76c6328c25791064b9c85838d5afe797, type: 3}
-    hotspot: {x: 24, y: 12}
+    hotspot: {x: 18, y: 9}
   - type: 1
     cursorTexture: {fileID: 2800000, guid: e49f8d9accdaf5c4c8406fbc962bc35f, type: 3}
-    hotspot: {x: 16, y: 16}
+    hotspot: {x: 8, y: 8}
   registeredMinigames:
   - type: 0
     prefab: {fileID: 3342937098406524943, guid: 342cd5ede8f949d4ebadd9359e0734a6, type: 3}
@@ -1059,10 +1059,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ToolButton
   tool: 4
   toolName: Watering Tool
-  toolDescription: 'It lets you water trees and soils, increasing their moisture
-    level or stopping fires. Water refills every month, with rainy months refilling
-    more\nThe fire icon and the white notch show you how much moisture there has
-    to be in the soil to stop a fire.\n You can unequip with Right Click. '
+  toolDescription: 'Lets you water a tree or fight against fire. Having watered a
+    tree regenerates health, otherwise there is a health penalty. Mature trees get
+    a lesser penalty without water.\n You can unequip with Right Click. '
   buttonContainer: {fileID: 1019133895}
   useOwnPosition: 0
   toolText: {fileID: 175971966}
@@ -3215,6 +3214,7 @@ MonoBehaviour:
   diseaseSpreadChance: 0.15
   pestRoundEndDamage: 0.2
   timeText: {fileID: 761821333}
+  firstDiseaseTutorial: {fileID: 11400000, guid: e4b12bea27a9227489b2042b9901424e, type: 2}
 --- !u!1 &728188711
 GameObject:
   m_ObjectHideFlags: 0
@@ -4914,7 +4914,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0000058413, y: -15.4}
+  m_AnchoredPosition: {x: 0.0000058413, y: -9.1}
   m_SizeDelta: {x: 339.66, y: 93.3825}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1088512848
@@ -4937,8 +4937,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Trees Planted: \nTrees Died:\nFires Started:\nWater tool used:\nDitches
-    used:"
+  m_text: "Trees Planted: \nTrees Died:\nFires Started:\nWater tool used:\nFertilizer
+    used:\nBeetle Infestations stopped: "
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5004,7 +5004,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -0.8147812, y: 0.36690044, z: -1.1150129, w: -0.359581}
+  m_margin: {x: -0.8147812, y: -0.41655445, z: -1.1150129, w: 5.1246834}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -5166,7 +5166,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ToolButton
   tool: 5
   toolName: Pesticide
-  toolDescription: Use on trees with a bark beetle infestation.
+  toolDescription: Use on trees with a bark beetle infestation.\n You can unequip
+    with Right Click.
   buttonContainer: {fileID: 1019133895}
   useOwnPosition: 0
   toolText: {fileID: 1951563070}
@@ -6101,7 +6102,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ToolButton
   tool: 2
   toolName: Remove
-  toolDescription: It lets you remove trees and ditches.\n You can unequip with Right
+  toolDescription: It lets you remove trees and weeds.\n You can unequip with Right
     Click.
   buttonContainer: {fileID: 1019133895}
   useOwnPosition: 0
@@ -6551,7 +6552,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.0355, y: 66.33005}
+  m_AnchoredPosition: {x: 0.0000035763, y: 71}
   m_SizeDelta: {x: 266.6142, y: 41.5859}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1478648611
@@ -6774,6 +6775,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TreeButton
   treeData: {fileID: 11400000, guid: 49138b779bf3d0b4fb2b918496337ad9, type: 2}
   buttonText: {fileID: 1787050957}
+  button: {fileID: 1488435340}
 --- !u!222 &1488435343
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7519,6 +7521,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TreeButton
   treeData: {fileID: 11400000, guid: 7dd4ecb8c8b80ed42b42def04974069f, type: 2}
   buttonText: {fileID: 1543226838}
+  button: {fileID: 1559471381}
 --- !u!222 &1559471384
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7647,6 +7650,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TreeButton
   treeData: {fileID: 11400000, guid: 71916c3326f746a40982570bd4f9604d, type: 2}
   buttonText: {fileID: 835077317}
+  button: {fileID: 1559788675}
 --- !u!222 &1559788678
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8089,13 +8093,14 @@ MonoBehaviour:
   fireBaseChance: 0.05
   fireHeatwaveMultiplier: 4
   fireDroughtMultiplier: 2.5
-  fireUnwateredRoundWeight: 0.08
   grassFireMultiplier: 0.15
   pestChanceSummer: 0.12
   pestChanceSpring: 0.08
   pestChanceAutumn: 0.04
   pestChanceWinter: 0.01
   pestMonocultureWeight: 0.5
+  firstFireTutorial: {fileID: 11400000, guid: 0d3786c53227f4142946261fb738decb, type: 2}
+  firstPestTutorial: {fileID: 11400000, guid: b243eb500e7947a42bc3ed6efe0c4c1e, type: 2}
 --- !u!4 &1655500123
 Transform:
   m_ObjectHideFlags: 0
@@ -14908,7 +14913,9 @@ MonoBehaviour:
   tool: 3
   toolName: Fertilize
   toolDescription: Fertilizes the soil making it more likely that your Trees can
-    survive..\n You can unequip with Right Click.
+    survive. You can fertilize up to twice. Having done it just once has a small
+    health penalty and 0 times has a bigger one. Two times regenerates health. Mature
+    trees have a lesser penalty.\n You can unequip with Right Click.
   buttonContainer: {fileID: 1019133895}
   useOwnPosition: 0
   toolText: {fileID: 417337254}
@@ -15675,14 +15682,16 @@ MonoBehaviour:
   fertilizeSprite: {fileID: 3541682521958584823, guid: 2f61396b65d6ecf418c5e7d2f03d3040, type: 3}
   pesticideSprite: {fileID: -3402009139923206164, guid: a146fb7f79c8b0e4f8b7130689b6b29f, type: 3}
   firstPlantTutorial: {fileID: 11400000, guid: f0f1c3c245e01c6409f7c5d326f26647, type: 2}
+  firstMinigameFinishedTutorial: {fileID: 11400000, guid: 235db9ae9c8a3bc4491bbd77f9cda9b0, type: 2}
   seedCount: 10
   waterBudget: 10
   fertilizeBudget: 5
   treesPlanted: 0
   treesDied: 0
   waterToolsUsed: 0
-  ditchToolsUsed: 0
+  fertilizeToolsUsed: 0
   firesStarted: 0
+  pestsStopped: 0
   fireMinigameLossDamage: 0.25
   fireSpreadBaseChance: 0.35
   pestMinigameLossDamage: 0.08
@@ -15690,7 +15699,7 @@ MonoBehaviour:
   weedAmount: 6
   weedTime: 6
   fireAmount: 6
-  fireTime: 19.5
+  fireTime: 20.5
   diseaseAmount: 4
   diseaseTime: 0
   pestAmount: 6

@@ -29,6 +29,7 @@ public class InteractionManager : MonoBehaviour
     [SerializeField] private Sprite pesticideSprite;
 
     [SerializeField] private TutorialStep firstPlantTutorial;
+    [SerializeField] private TutorialStep firstMinigameFinishedTutorial;
 
     private Grid grid;
 
@@ -44,8 +45,9 @@ public class InteractionManager : MonoBehaviour
     public int treesPlanted = 0;
     public int treesDied = 0;
     public int waterToolsUsed = 0;
-    public int ditchToolsUsed = 0;
+    public int fertilizeToolsUsed = 0;
     public int firesStarted = 0;
+    public int pestsStopped = 0;
 
     [SerializeField] private float fireMinigameLossDamage = 0.25f;
     [SerializeField] private float fireSpreadBaseChance = 0.35f;
@@ -121,8 +123,8 @@ public class InteractionManager : MonoBehaviour
         waterBudget = Mathf.RoundToInt(startingTrees * 1.5f);
         fertilizeBudget = Mathf.RoundToInt(startingTrees * 0.75f);
 
-        waterBudgetMax = Mathf.RoundToInt(maxPlantableTiles * 1.5f);
-        fertilizeBudgetMax = Mathf.RoundToInt(maxPlantableTiles * 2.75f);
+        waterBudgetMax = Mathf.RoundToInt(maxPlantableTiles * 1.45f);
+        fertilizeBudgetMax = Mathf.RoundToInt(maxPlantableTiles * 2.5f);
 
         OnBudgetChanged?.Invoke();
     }
@@ -260,7 +262,7 @@ public class InteractionManager : MonoBehaviour
         {
             if (soil.isOnFire) return;
 
-            Open(MinigameType.WeedClearing, soil, null, weedTime, weedAmount,
+            Open(MinigameType.WeedClearing, soil, null, 0, weedAmount,
             "Click the weeds to clear them!");
             return;
         }
@@ -277,7 +279,9 @@ public class InteractionManager : MonoBehaviour
 
         if (currTool == ToolType.Remove && soil.CurrentObject is Tree tree)
         {
-            Open(MinigameType.Disease, soil, tree, diseaseTime, diseaseAmount,
+
+            int time = tree.hasDisease ? 0 : 6;
+            Open(MinigameType.Disease, soil, tree, time, diseaseAmount,
                 "Click the tree to chop it down!");
             return;
         }
@@ -375,7 +379,16 @@ public class InteractionManager : MonoBehaviour
 
             case MinigameType.Disease:
                 tree.hasDisease = false;
-                soil.RemoveObject();
+                if (soil.RemoveObject()) {
+                 
+                    seedCount++;
+                    OnSeedChanged?.Invoke();
+                }
+                SoundManager.Instance.PlaySFX("removeSFX");
+
+                SoilOverlay overlay = soil.GetComponent<SoilOverlay>();
+                if (overlay != null)
+                    overlay.Refresh();
                 break;
 
             case MinigameType.PestControl:
@@ -383,6 +396,7 @@ public class InteractionManager : MonoBehaviour
                 {
                     tree.hasPest = false;
                     tree.GetComponent<TreeOverlay>()?.Refresh();
+                    pestsStopped++;
                 }
                 else
                 {
@@ -391,6 +405,14 @@ public class InteractionManager : MonoBehaviour
                 }
                 break;
         }
+
+        selectedTree = null;
+        cursorPreview.SetActive(false);
+        currTool = ToolType.None;
+        InfoPanelUI.Instance.Hide();
+        ApplyCursorForCurrentTool();
+
+        TutorialManager.Instance.TriggerTutorial(firstMinigameFinishedTutorial);
     }
 
     private void TrySpreadFire(Soil source)
@@ -471,8 +493,10 @@ public class InteractionManager : MonoBehaviour
     {
         if(fertilizeBudget <= 0 || soil.fertilized >= 2 || soil.isLocked || !soil.HasObject || soil.CurrentObject is not Tree || (soil.CurrentObject is Tree tree && tree.hasDisease)) return;
 
+        SoundManager.Instance.PlaySFX("plantSFX");
         soil.Fertilize();
         fertilizeBudget--;
+        fertilizeToolsUsed++;
 
         OnBudgetChanged?.Invoke();
     }
@@ -572,6 +596,8 @@ public class InteractionManager : MonoBehaviour
 
             s.Water();
             waterBudget--;
+            waterToolsUsed++;
+            SoundManager.Instance.PlaySFX("waterSFX");
         }
 
         OnBudgetChanged?.Invoke();
@@ -589,6 +615,8 @@ public class InteractionManager : MonoBehaviour
 
             s.Fertilize();
             fertilizeBudget--;
+            fertilizeToolsUsed++;
+            SoundManager.Instance.PlaySFX("plantSFX");
         }
 
         OnBudgetChanged?.Invoke();

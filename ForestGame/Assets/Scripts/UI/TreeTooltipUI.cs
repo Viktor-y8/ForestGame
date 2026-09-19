@@ -140,8 +140,8 @@ public class TreeTooltipUI : MonoBehaviour
         statsText.text =
             $"Matures in: {data.minMaturityAgeYears}–{data.maxMaturityAgeYears} years\n" +
             $"Max age: {data.maxAgeYears} years\n" +
-            $"Drought resistance: {(data.droughtResistance * 100f):0}%\n" +
-            $"Shade tolerance: {(data.shadeTolerance * 100f):0}%\n" +
+            //$"Drought resistance: {(data.droughtResistance * 100f):0}%\n" +
+            //$"Shade tolerance: {(data.shadeTolerance * 100f):0}%\n" +
             $"Spread chance: {(data.spreadChance * 100f):0}%\n";
 
         Display(container, useOwnPosition);

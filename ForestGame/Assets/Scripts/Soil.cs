@@ -163,11 +163,11 @@ public class Soil : MonoBehaviour
     private void OnMouseEnter()
     {
         if (RoundManager.Instance.Phase != GamePhase.Planning) return;
-
-        if (!InteractionManager.Instance.hasSelectedTool() && CurrentObject is Tree tree && !tree.isImmune && !isOnFire && !tree.hasPest && !tree.hasDisease)
+        //!InteractionManager.Instance.hasSelectedTool() && 
+        if (CurrentObject is Tree tree && !tree.isImmune && !isOnFire && !tree.hasPest && !tree.hasDisease)
         {
             tree.GetComponent<TreeForecastLabel>()?.Show(
-                tree.health * 100f, tree.PredictedHealthDeltaPercent(), tree.WillDieNextRound());
+                tree.health * 100f, tree.PredictedHealthDeltaPercent(), tree.WillDieNextRound(), false);
         }
 
         ToolType? hintTool = GetHintTool();

@@ -71,6 +71,7 @@ public class Tree : TileObject
                 _ => -0.1f,
             };
 
+
             stress += soil.isWatered ? -0.1f : 0.3f;
         }
         else

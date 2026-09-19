@@ -37,6 +37,8 @@ public class RoundManager : MonoBehaviour
 
     [SerializeField] private TMP_Text timeText;
 
+    [SerializeField] private TutorialStep firstDiseaseTutorial;
+
     private void Awake()
     {
         Instance = this;
@@ -89,7 +91,11 @@ public class RoundManager : MonoBehaviour
             if (tree.hasPest) tree.TakeDamage(pestRoundEndDamage);
             if (tree == null) continue;
 
-            if (tree.hasDisease) TrySpreadDisease(soil, tree);
+            if (tree.hasDisease)
+            {
+                TrySpreadDisease(soil, tree);
+                soil.RemoveObject();
+            }
 
             tree.ResolveRound();
         }
@@ -115,6 +121,7 @@ public class RoundManager : MonoBehaviour
             if (tree.health < diseaseHealthThreshold && UnityEngine.Random.value < diseaseChance)
             {
                 tree.hasDisease = true;
+                TutorialManager.Instance.TriggerTutorial(firstDiseaseTutorial);
                 tree.GetComponent<TreeOverlay>()?.Refresh();
             }
         }

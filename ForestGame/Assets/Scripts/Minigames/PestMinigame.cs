@@ -30,6 +30,8 @@ public class PestMinigame : MinigameBase
 
     private void HandleSquashed(InsectPiece insect)
     {
+        SoundManager.Instance.PlaySFX("squishSFX");
+
         activeInsects.Remove(insect);
         if (activeInsects.Count == 0)
             Complete(new MinigameResult { success = true, completionFraction = 1f });

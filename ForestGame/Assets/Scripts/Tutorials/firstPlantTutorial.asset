@@ -15,9 +15,8 @@ MonoBehaviour:
   stepId: firstPlantTutorial
   title: Planting Trees
   body: When you plant a tree it goes through a few stages until it reaches maturity.
-    You need to carefully observe the moisture and water it and make sure it can
-    survive! The spots next to mature trees conserve more water so it might be smart
-    to plant next to them.\n When your tree reaches the mature stage it will automatically
-    start planting too!\n You can also use the Remove tool on your seed to remove
-    it and add it to your seeds count.
+    You need to water and fertilize it, because otherwise it receives a health penalty.
+    Mature trees receive a lesser penalty.\n When your tree reaches the mature stage
+    it will automatically start planting too!\n You can also use the Remove tool
+    on your seed to remove it and add it to your seeds count.
   image: {fileID: 0}

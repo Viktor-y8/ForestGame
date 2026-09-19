@@ -17,7 +17,7 @@ public class DiseaseMinigame : MinigameBase
 
     protected override void OnBegin()
     {
-        hitsNeeded = Context.requiredSuccesses;
+        hitsNeeded = 4;
         hitsSoFar = 0;
         treeRect = treeImage.rectTransform;
         basePos = treeRect.anchoredPosition;
@@ -30,6 +30,8 @@ public class DiseaseMinigame : MinigameBase
     public void OnTreeClicked()
     {
         if (finished) return;
+
+        SoundManager.Instance.PlaySFX("buttonSFX");
 
         hitsSoFar++;
         StopAllCoroutines();

@@ -31,3 +31,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: ca5aff753f896de4196cba1c8feb0c70, type: 3}
   - name: loseSFX
     clip: {fileID: 8300000, guid: b76b0aa69408b424eac990f0d8d9b3e7, type: 3}
+  - name: snipSFX
+    clip: {fileID: 8300000, guid: 7efaaa571cf07f64585c98db0c339b5e, type: 3}
+  - name: squishSFX
+    clip: {fileID: 8300000, guid: f90144e1f53d8a847a630b3ec0cfb674, type: 3}

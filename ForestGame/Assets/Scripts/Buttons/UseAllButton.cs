@@ -15,11 +15,6 @@ public class UseAllButton : MonoBehaviour
         SetVisible();
     }
 
-    private void OnEnable()
-    {
-        SetVisible();
-    }
-
     private void OnDestroy()
     {
         InteractionManager.OnBudgetChanged -= SetVisible;
@@ -28,21 +23,18 @@ public class UseAllButton : MonoBehaviour
 
     private void SetVisible()
     {
-        // Level hasn't finished loading
-        if (GameManager.Instance == null || !GameManager.Instance.IsLevelLoaded)
+        if (GameManager.Instance == null ||
+            !GameManager.Instance.IsLevelLoaded)
         {
-            gameObject.SetActive(false);
             return;
         }
 
-        // Second container is currently being shown
         if (firstContainerButton == null || !firstContainerButton.activeSelf)
         {
             gameObject.SetActive(false);
             return;
         }
 
-        // Check if Use All can actually be used
         if (isWater)
             gameObject.SetActive(InteractionManager.Instance.CanWaterAllTrees());
         else

@@ -14,12 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TutorialStep
   stepId: firstFireTutorial
   title: Fires
-  body: 'A fire has a chance of starting when the weather is Drought or Heatwave.\n
+  body: 'A fire has a small chance of starting when the weather is Normal and a bigger
+    one when it is Drought or Heatwave.\n
 
-    It
-    burns quicker and has a smaller chance to spread when it is on an empty Soil.
-    When it fully burns a Soil it can''t be burnt again for some time.\n
+    Use your water tool to put it out.
+    If you don''t manage to do it the fire will spread to nearby tiles and damage
+    the tree (-25% health).\n
 
-    Use
-    your Water tool or hope for Rain to stop the fire!'
+    Hovering the "End Round" button will show you
+    which tiles will burn down if you leave the fire. Burn down tiles are unusable
+    for one round.'
   image: {fileID: 0}

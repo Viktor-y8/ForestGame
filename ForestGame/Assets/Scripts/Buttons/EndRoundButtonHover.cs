@@ -52,7 +52,7 @@ public class EndRoundButtonHover : MonoBehaviour, IPointerEnterHandler, IPointer
             if (forecast == null) continue;
 
             if (visible)
-                forecast.Show(tree.health * 100f, tree.PredictedHealthDeltaPercent(), tree.WillDieNextRound());
+                forecast.Show(tree.health * 100f, tree.PredictedHealthDeltaPercent(), tree.WillDieNextRound(), true);
             else
                 forecast.Hide();
         }

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e88477da3f617c468bdb7ee1a7baf06, type: 3}
+  m_Name: firstPestTutoriail
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialStep
+  stepId: firstPestTutorial
+  title: Bark Beetle Infestation
+  body: Trees have a chance of getting a Bark Beetle infestation. To fight them you
+    need to use the pesticide tool. Failing the mini-game damages the tree slightly
+    (-8%) and has a chance to spread the beetles to other trees. Ending the round
+    with beetles still present damages the tree a lot (-20%) and spreads them further.
+  image: {fileID: 0}

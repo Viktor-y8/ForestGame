@@ -36,7 +36,7 @@ public class TreeForecastLabel : MonoBehaviour
         basePositionSet = true;
     }
 
-    public void Show(float currentHealth, float deltaPercent, bool willDie)
+    public void Show(float currentHealth, float deltaPercent, bool willDie, bool endRound)
     {
         if (!basePositionSet) RefreshPosition();
 
@@ -49,9 +49,17 @@ public class TreeForecastLabel : MonoBehaviour
         {
             skullIcon.enabled = false;
             labelRenderer.enabled = true;
-            string sign = deltaPercent >= 0 ? "+" : "";
-            label.text = $"{currentHealth:0}% {sign} {deltaPercent:0}%";
-            label.color = deltaPercent >= 0 ? positiveColor : negativeColor;
+            if (endRound)
+            {
+                string sign = deltaPercent >= 0 ? "\n+" : "";
+                label.text = $"{currentHealth:0}% {sign}{deltaPercent:0}%";
+                label.color = deltaPercent >= 0 ? positiveColor : negativeColor;
+            }
+            else
+            {
+                label.text = $"{currentHealth:0}%";
+                label.color = Color.white;
+            }
         }
     }
 

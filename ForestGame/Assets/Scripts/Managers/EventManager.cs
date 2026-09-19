@@ -6,19 +6,20 @@ public class EventManager : MonoBehaviour
     public static EventManager Instance;
 
     [Header("Fire")]
-    [SerializeField] private float fireBaseChance = 0.05f;
+    [SerializeField] private float fireBaseChance = 0.09f;
     [SerializeField] private float fireHeatwaveMultiplier = 4f;
     [SerializeField] private float fireDroughtMultiplier = 2.5f;
-    [SerializeField] private float fireUnwateredRoundWeight = 0.08f;
     [SerializeField] private float grassFireMultiplier = 0.15f;
 
     [Header("Pest")]
-    [SerializeField] private float pestChanceSummer = 0.12f;
-    [SerializeField] private float pestChanceSpring = 0.08f;
-    [SerializeField] private float pestChanceAutumn = 0.04f;
+    [SerializeField] private float pestChanceSummer = 0.2f;
+    [SerializeField] private float pestChanceSpring = 0.12f;
+    [SerializeField] private float pestChanceAutumn = 0.08f;
     [SerializeField] private float pestChanceWinter = 0.01f;
     [SerializeField] private float pestMonocultureWeight = 0.5f;
 
+    [SerializeField] private TutorialStep firstFireTutorial;
+    [SerializeField] private TutorialStep firstPestTutorial;
 
 
     private void Awake() => Instance = this;
@@ -35,19 +36,34 @@ public class EventManager : MonoBehaviour
             _ => 1f,
         };
 
+        int firesAllowed = weather switch
+        {
+
+            WeatherType.Heatwave => Random.Range(4, 5),
+            WeatherType.Drought => Random.Range(2, 3),
+            _ => Random.Range(1, 2),
+        };
+
+        int currentFires = 0;
+
         foreach (Soil s in allSoils)
         {
             if (s.isLocked || s.isOnFire || s.CurrentObject is Ditch) continue;
             if (s.CurrentObject is Tree existingTree && (existingTree.hasPest || existingTree.hasDisease)) continue;
 
             float chance = fireBaseChance * weatherMultiplier;
-            //chance *= 0.5f + s.DrynessFactor();
-            //chance += s.roundsUnwatered * fireUnwateredRoundWeight;
 
             if (s.CurrentObject is not Tree) chance *= grassFireMultiplier;
 
             if (Random.value < chance && s.Ignite())
+            {
                 ignited.Add(s);
+                currentFires++;
+
+                TutorialManager.Instance.TriggerTutorial(firstFireTutorial);
+            }
+
+            if (currentFires == firesAllowed) break;
         }
 
         return ignited;
@@ -86,6 +102,7 @@ public class EventManager : MonoBehaviour
                 tree.hasPest = true;
                 tree.GetComponent<TreeOverlay>()?.Refresh();
                 infested.Add(s);
+                TutorialManager.Instance.TriggerTutorial(firstPestTutorial);
             }
         }
 

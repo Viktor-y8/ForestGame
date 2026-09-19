@@ -30,6 +30,7 @@ public class FireMinigame : MinigameBase
 
         if (currentFill <= 0f)
         {
+            SoundManager.Instance.PlaySFX("waterSFX");
             successesSoFar++;
             if (successesSoFar >= successesNeeded)
                 Complete(new MinigameResult { success = true, completionFraction = 1f });

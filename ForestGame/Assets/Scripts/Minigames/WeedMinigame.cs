@@ -31,6 +31,7 @@ public class WeedMinigame : MinigameBase
 
     private void HandleWeedClicked(WeedPiece piece)
     {
+        SoundManager.Instance.PlaySFX("snipSFX");
         activePieces.Remove(piece);
         piece.PlayClearedAnim(() => Destroy(piece.gameObject));
         if (activePieces.Count == 0)

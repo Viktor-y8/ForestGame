@@ -27,7 +27,8 @@ public class WinPanelUI : MonoBehaviour
         int treesDied = InteractionManager.Instance.treesDied;
         int firesStarted = InteractionManager.Instance.firesStarted;
         int waterToolsUsed = InteractionManager.Instance.waterToolsUsed;
-        int ditchToolsUsed = InteractionManager.Instance.ditchToolsUsed;
+        int fetilizeToolsUsed = InteractionManager.Instance.fertilizeToolsUsed;
+        int pestsStopped = InteractionManager.Instance.pestsStopped;
 
         if (win)
         {
@@ -48,7 +49,7 @@ public class WinPanelUI : MonoBehaviour
             }
         }
 
-        infoText.text = $"Trees Planted: {treesPlanted}\r\nTrees Died: {treesDied}\r\nFires Started: {firesStarted}\r\nWater tool used: {waterToolsUsed}\r\nDitches used: {ditchToolsUsed}";
+        infoText.text = $"Trees Planted: {treesPlanted}\r\nTrees Died: {treesDied}\r\nFires Started: {firesStarted}\r\nWater tool used: {waterToolsUsed}\r\nFertilizer used: {fetilizeToolsUsed}\r\nBeetle Infestations used: {fetilizeToolsUsed}";
     }
 
     public void GoToMenu()
