@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum ToolType
@@ -368,6 +370,7 @@ public class InteractionManager : MonoBehaviour
                 if (result.success)
                 {
                     soil.Extinguish();
+                    Tree.NotifyTreeChanged();
                 }
                 else
                 {
@@ -378,17 +381,22 @@ public class InteractionManager : MonoBehaviour
                 break;
 
             case MinigameType.Disease:
-                tree.hasDisease = false;
-                if (soil.RemoveObject()) {
-                 
-                    seedCount++;
-                    OnSeedChanged?.Invoke();
-                }
-                SoundManager.Instance.PlaySFX("removeSFX");
+                if (result.success)
+                {
+                    tree.hasDisease = false;
+                    if (soil.RemoveObject())
+                    {
 
-                SoilOverlay overlay = soil.GetComponent<SoilOverlay>();
-                if (overlay != null)
-                    overlay.Refresh();
+                        seedCount++;
+                        OnSeedChanged?.Invoke();
+                    }
+                    SoundManager.Instance.PlaySFX("removeSFX");
+
+                    SoilOverlay overlay = soil.GetComponent<SoilOverlay>();
+                    if (overlay != null)
+                        overlay.Refresh();
+                    Tree.NotifyTreeChanged();
+                }
                 break;
 
             case MinigameType.PestControl:
@@ -468,7 +476,7 @@ public class InteractionManager : MonoBehaviour
     public void TryPlant(Soil soil)
     {
 
-        if (selectedTree == null || soil.HasObject || seedCount <= 0 || soil.isScarred) return;
+        if (selectedTree == null || soil.HasObject || seedCount <= 0 || soil.isScarred || soil.isOnFire) return;
 
         soil.PlantTree(selectedTree);
         seedCount--;
@@ -564,7 +572,8 @@ public class InteractionManager : MonoBehaviour
 
     public bool CanFertilizeAllTrees()
     {
-        int needed = CountUnfertilizedTrees();
+        List<Soil> eligible = GetFertilizeTierEligible(out int minLevel);
+        int needed = eligible.Count(s => s.fertilized == minLevel);
         return needed > 0 && fertilizeBudget >= needed;
     }
 
@@ -572,7 +581,13 @@ public class InteractionManager : MonoBehaviour
     {
         int count = 0;
         foreach (Soil s in GameManager.Instance.GetAllSoils())
-            if (!s.isLocked && s.CurrentObject is Tree && !s.isWatered) count++;
+        {
+            if (s.isLocked || s.CurrentObject is not Tree tree) continue;
+            if (tree.hasDisease) continue;
+            if (s.isWatered) continue;
+            if (s.isOnFire) continue;
+            count++;
+        }
         return count;
     }
 
@@ -580,7 +595,12 @@ public class InteractionManager : MonoBehaviour
     {
         int count = 0;
         foreach (Soil s in GameManager.Instance.GetAllSoils())
-            if (!s.isLocked && s.CurrentObject is Tree && s.fertilized < 2 && s.fertilized >= 0) count++;
+        {
+            if (s.isLocked || s.CurrentObject is not Tree tree) continue;
+            if (tree.hasDisease) continue;
+            if (s.fertilized >= 2) continue;
+            count++;
+        }
         return count;
     }
 
@@ -597,39 +617,61 @@ public class InteractionManager : MonoBehaviour
             s.Water();
             waterBudget--;
             waterToolsUsed++;
-            SoundManager.Instance.PlaySFX("waterSFX");
         }
+
+        SoundManager.Instance.PlaySFX("waterSFX");
 
         OnBudgetChanged?.Invoke();
     }
 
-    public void UseAllFertilize()
+    private List<Soil> GetFertilizeTierEligible(out int minLevel)
     {
+        minLevel = int.MaxValue;
+        List<Soil> eligible = new();
+
         foreach (Soil s in GameManager.Instance.GetAllSoils())
         {
-            if (fertilizeBudget <= 0)
-                break;
+            if (s.isLocked || s.CurrentObject is not Tree tree) continue;
+            if (tree.hasDisease) continue;
+            if (s.fertilized >= 2) continue;
 
-            if (s.isLocked || s.CurrentObject is not Tree || s.fertilized >= 2)
-                continue;
+            eligible.Add(s);
+            if (s.fertilized < minLevel) minLevel = s.fertilized;
+        }
+
+        return eligible;
+    }
+
+
+
+    public void UseAllFertilize()
+    {
+        List<Soil> eligible = GetFertilizeTierEligible(out int minLevel);
+
+        foreach (Soil s in eligible)
+        {
+            if (fertilizeBudget <= 0) break;
+            if (s.fertilized != minLevel) continue;
 
             s.Fertilize();
             fertilizeBudget--;
-            fertilizeToolsUsed++;
-            SoundManager.Instance.PlaySFX("plantSFX");
         }
+
+        SoundManager.Instance.PlaySFX("plantSFX");
 
         OnBudgetChanged?.Invoke();
     }
 
     public void TryRemove(Soil soil)
     {
-
         if (!soil.HasObject) return;
 
-        if(soil.RemoveObject()) seedCount++;
+        bool wasTree = soil.CurrentObject is Tree;
+
+        if (soil.RemoveObject()) seedCount++;
 
         OnSeedChanged?.Invoke();
+        if (wasTree) Tree.NotifyTreeChanged();
 
         SoundManager.Instance.PlaySFX("removeSFX");
     }

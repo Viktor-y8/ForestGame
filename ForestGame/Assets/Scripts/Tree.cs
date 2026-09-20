@@ -27,6 +27,10 @@ public class Tree : TileObject
     public bool hasDisease = false;
     public bool hasPest = false;
 
+    public static event System.Action OnAnyTreeChanged;
+    public static void NotifyTreeChanged() => OnAnyTreeChanged?.Invoke();
+
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -42,6 +46,8 @@ public class Tree : TileObject
 
         justPlanted = true;
         currentStage = TreeStage.Seed;
+
+        OnAnyTreeChanged?.Invoke();
     }
 
     public void ResolveRound()
@@ -60,6 +66,8 @@ public class Tree : TileObject
 
     private float CalculateStress()
     {
+
+        float droughtMultiplier = 1f - data.droughtResistance;
         float stress = 0;
 
         if (!isMature)
@@ -72,7 +80,7 @@ public class Tree : TileObject
             };
 
 
-            stress += soil.isWatered ? -0.1f : 0.3f;
+            stress += soil.isWatered ? -0.1f : 0.3f * droughtMultiplier;
         }
         else
         {
@@ -83,7 +91,7 @@ public class Tree : TileObject
                 _ => -0.1f,
             };
 
-            stress += soil.isWatered ? -0.1f : 0.2f;
+            stress += soil.isWatered ? -0.1f : 0.2f * droughtMultiplier;
         }
 
         return stress;
@@ -252,5 +260,6 @@ public class Tree : TileObject
         dead = true;
 
         soil.RemoveObject();
+        NotifyTreeChanged();
     }
 }

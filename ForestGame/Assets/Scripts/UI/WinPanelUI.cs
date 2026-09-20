@@ -49,7 +49,7 @@ public class WinPanelUI : MonoBehaviour
             }
         }
 
-        infoText.text = $"Trees Planted: {treesPlanted}\r\nTrees Died: {treesDied}\r\nFires Started: {firesStarted}\r\nWater tool used: {waterToolsUsed}\r\nFertilizer used: {fetilizeToolsUsed}\r\nBeetle Infestations used: {fetilizeToolsUsed}";
+        infoText.text = $"Trees Planted: {treesPlanted}\r\nTrees Died: {treesDied}\r\nFires Started: {firesStarted}\r\nWater tool used: {waterToolsUsed}\r\nFertilizer used: {fetilizeToolsUsed}\r\nBeetle Infestations used: {pestsStopped}";
     }
 
     public void GoToMenu()

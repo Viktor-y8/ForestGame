@@ -15,6 +15,8 @@ public class DiseaseMinigame : MinigameBase
     private RectTransform treeRect;
     private Vector2 basePos;
 
+    private Coroutine shakeCoroutine;
+
     protected override void OnBegin()
     {
         hitsNeeded = 4;
@@ -34,8 +36,8 @@ public class DiseaseMinigame : MinigameBase
         SoundManager.Instance.PlaySFX("buttonSFX");
 
         hitsSoFar++;
-        StopAllCoroutines();
-        StartCoroutine(ShakeRoutine());
+        if (shakeCoroutine != null) StopCoroutine(shakeCoroutine);
+        shakeCoroutine = StartCoroutine(ShakeRoutine());
 
         Sprite[] sprites = (Context.targetTree != null && Context.targetTree.hasDisease) ? dieseasedSprites : normalSprites;
 

@@ -18,6 +18,7 @@ public class RoundManager : MonoBehaviour
 
     public GamePhase Phase { get; private set; } = GamePhase.Planning;
     public event Action<GamePhase> OnPhaseChanged;
+    public event Action<GamePhase> OnPhaseSettled;
 
     [Header("Round summary")]
     public int treesLostThisRound;
@@ -60,6 +61,13 @@ public class RoundManager : MonoBehaviour
     {
         Phase = phase;
         OnPhaseChanged?.Invoke(phase);
+        StartCoroutine(NotifySettledNextFrame(phase));
+    }
+
+    private IEnumerator NotifySettledNextFrame(GamePhase phase)
+    {
+        yield return null;
+        OnPhaseSettled?.Invoke(phase);
     }
 
     public void EndPlanningPhase()

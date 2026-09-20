@@ -54,7 +54,6 @@ public class CameraController : MonoBehaviour
         }
 
         if (!moveCam) return;
-
         if (TutorialManager.IsTutorialActive) return;
 
         float x = transform.position.x;
@@ -64,6 +63,11 @@ public class CameraController : MonoBehaviour
         if (Input.mousePosition.x < boundary) x -= speed * Time.deltaTime;
         if (Input.mousePosition.y > screenHeight - boundary) y += speed * Time.deltaTime;
         if (Input.mousePosition.y < boundary) y -= speed * Time.deltaTime;
+
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) x += speed * Time.deltaTime;
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) x -= speed * Time.deltaTime;
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) y += speed * Time.deltaTime;
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) y -= speed * Time.deltaTime;
 
         if (hasBounds)
         {

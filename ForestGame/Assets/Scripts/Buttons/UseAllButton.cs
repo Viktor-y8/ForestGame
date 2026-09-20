@@ -11,7 +11,14 @@ public class UseAllButton : MonoBehaviour
     {
         InteractionManager.OnBudgetChanged += SetVisible;
         InteractionManager.OnSeedChanged += SetVisible;
+        RoundManager.Instance.OnPhaseSettled += HandlePhaseSettled;
+        Tree.OnAnyTreeChanged += SetVisible;
 
+        SetVisible();
+    }
+
+    private void OnEnable()
+    {
         SetVisible();
     }
 
@@ -19,13 +26,18 @@ public class UseAllButton : MonoBehaviour
     {
         InteractionManager.OnBudgetChanged -= SetVisible;
         InteractionManager.OnSeedChanged -= SetVisible;
+        if (RoundManager.Instance != null)
+            RoundManager.Instance.OnPhaseSettled -= HandlePhaseSettled;
+        Tree.OnAnyTreeChanged -= SetVisible;
     }
+
+    private void HandlePhaseSettled(GamePhase phase) => SetVisible();
 
     private void SetVisible()
     {
-        if (GameManager.Instance == null ||
-            !GameManager.Instance.IsLevelLoaded)
+        if (GameManager.Instance == null || !GameManager.Instance.IsLevelLoaded)
         {
+            gameObject.SetActive(false);
             return;
         }
 
