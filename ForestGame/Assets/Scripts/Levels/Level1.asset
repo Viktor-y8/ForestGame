@@ -28,6 +28,8 @@ MonoBehaviour:
   levelName: Level 1 - Maple Forest
   levelDescription: There is a danger of a landslide so it is your job to fill this
     empty patch of land in the middle of the forest.\nYour job is to fill it all
-    with only Sycamore Maples!\n Quick tip - you can Left Click on the soils to display
-    info about them and the trees that are planted.
+    with only Sycamore Maples!\n\nQuick tip - you can Left Click on the soils to
+    display info about them and the trees that are planted and the camera can be
+    moved by using WASD, the arrow keys or moving the mouse close to the corners
+    of the screen.
   backgroundMusic: {fileID: 8300000, guid: 17e5b919bbb195745869cfa7e2901c71, type: 3}

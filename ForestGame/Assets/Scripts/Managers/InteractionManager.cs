@@ -179,8 +179,8 @@ public class InteractionManager : MonoBehaviour
                     ToolType.Plant => soil.HasObject || soil.isScarred,
                     ToolType.Remove => !soil.HasObject || soil.isLocked,
                     ToolType.Pesticide => (soil.CurrentObject is Tree tree && !tree.hasPest) || soil.CurrentObject is not Tree,
-                    ToolType.Water => soil.isLocked || waterBudget <= 0 || (soil.CurrentObject is Tree tree && tree.hasDisease) || (soil.CurrentObject is not Tree && !soil.isOnFire) || soil.isWatered,
-                    ToolType.Fertilize => soil.fertilized >= 2 || fertilizeBudget <= 0 || soil.isLocked || (soil.CurrentObject is Tree tree && tree.hasDisease) || !soil.HasObject || soil.CurrentObject is not Tree,
+                    ToolType.Water => soil.isLocked || waterBudget <= 0 || (soil.CurrentObject is Tree tree && (tree.hasDisease || tree.hasPest)) || (soil.CurrentObject is not Tree && !soil.isOnFire) || soil.isWatered,
+                    ToolType.Fertilize => soil.fertilized >= 2 || fertilizeBudget <= 0 || soil.isLocked || (soil.CurrentObject is Tree tree && (tree.hasDisease || tree.hasPest)) || !soil.HasObject || soil.CurrentObject is not Tree,
                     _ => false
                 };
 
@@ -450,7 +450,6 @@ public class InteractionManager : MonoBehaviour
 
             if (Random.value < chance)
             {
-
                 neighborTree.hasPest = true;
                 neighborTree.GetComponent<TreeOverlay>()?.Refresh();
             }
@@ -499,7 +498,7 @@ public class InteractionManager : MonoBehaviour
 
     public void TryFertilize(Soil soil)
     {
-        if(fertilizeBudget <= 0 || soil.fertilized >= 2 || soil.isLocked || !soil.HasObject || soil.CurrentObject is not Tree || (soil.CurrentObject is Tree tree && tree.hasDisease)) return;
+        if(fertilizeBudget <= 0 || soil.fertilized >= 2 || soil.isLocked || !soil.HasObject || soil.CurrentObject is not Tree || (soil.CurrentObject is Tree tree && (tree.hasDisease || tree.hasPest))) return;
 
         SoundManager.Instance.PlaySFX("plantSFX");
         soil.Fertilize();
@@ -511,7 +510,7 @@ public class InteractionManager : MonoBehaviour
 
     public void TryWater(Soil soil)
     {
-        if (waterBudget <= 0 || soil.isWatered || soil.CurrentObject is not Tree || (soil.CurrentObject is Tree tree && tree.hasDisease)) return;
+        if (waterBudget <= 0 || soil.isWatered || soil.CurrentObject is not Tree || (soil.CurrentObject is Tree tree && (tree.hasDisease || tree.hasPest))) return;
 
         soil.Water();
         waterBudget--;
@@ -523,24 +522,6 @@ public class InteractionManager : MonoBehaviour
         SoundManager.Instance.PlaySFX("waterSFX");
     }
 
-    /*public void TryDigDitch(Soil soil)
-    {
-        if (ditchBudget <= 0) return;
-        if (soil.isOnFire || soil.recentlyOnFire) return;
-        if (soil.CurrentObject is Ditch) return;
-
-        if (soil.RemoveObject()) seedCount++;
-
-        soil.PlantDitch();
-        ditchBudget--;
-
-        ditchToolsUsed++;
-
-        OnBudgetChanged?.Invoke();
-
-        SoundManager.Instance.PlaySFX("plantSFX");
-    }
-    */
     public void RefillToolBudget()
     {
 
@@ -583,22 +564,9 @@ public class InteractionManager : MonoBehaviour
         foreach (Soil s in GameManager.Instance.GetAllSoils())
         {
             if (s.isLocked || s.CurrentObject is not Tree tree) continue;
-            if (tree.hasDisease) continue;
+            if (tree.hasDisease || tree.hasPest) continue;
             if (s.isWatered) continue;
             if (s.isOnFire) continue;
-            count++;
-        }
-        return count;
-    }
-
-    private int CountUnfertilizedTrees()
-    {
-        int count = 0;
-        foreach (Soil s in GameManager.Instance.GetAllSoils())
-        {
-            if (s.isLocked || s.CurrentObject is not Tree tree) continue;
-            if (tree.hasDisease) continue;
-            if (s.fertilized >= 2) continue;
             count++;
         }
         return count;
@@ -632,7 +600,7 @@ public class InteractionManager : MonoBehaviour
         foreach (Soil s in GameManager.Instance.GetAllSoils())
         {
             if (s.isLocked || s.CurrentObject is not Tree tree) continue;
-            if (tree.hasDisease) continue;
+            if (tree.hasDisease || tree.hasPest) continue;
             if (s.fertilized >= 2) continue;
 
             eligible.Add(s);

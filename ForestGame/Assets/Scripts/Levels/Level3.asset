@@ -15,14 +15,12 @@ MonoBehaviour:
   width: 23
   height: 16
   zoneMask: {fileID: 2800000, guid: 82722da2fdc71d34791f15ff87a8fd31, type: 3}
-  zoneSoilType: 0
   zoneMoisture: 0.5
   zoneMoistureRetention: 1
   borderTreePool:
   - {fileID: 11400000, guid: 49138b779bf3d0b4fb2b918496337ad9, type: 2}
   - {fileID: 11400000, guid: 7dd4ecb8c8b80ed42b42def04974069f, type: 2}
   - {fileID: 11400000, guid: 71916c3326f746a40982570bd4f9604d, type: 2}
-  borderSoilType: 0
   borderMoisture: 1
   seedCount: 40
   treeRequirements:
@@ -33,7 +31,7 @@ MonoBehaviour:
   - treeType: {fileID: 11400000, guid: 71916c3326f746a40982570bd4f9604d, type: 2}
     requiredMatureCount: 30
   timeLimitYears: 0
-  levelName: Level 3
+  levelName: Level 3 - Maple, Beech and Spruce Forest
   levelDescription: This is a mixed forest with Maple, Beech and Spruce trees. There
     is an empty patch because of illegal loggers, so it's your job to help with reforestation!
   backgroundMusic: {fileID: 8300000, guid: 17e5b919bbb195745869cfa7e2901c71, type: 3}

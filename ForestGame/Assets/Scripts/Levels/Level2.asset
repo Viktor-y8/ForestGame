@@ -15,13 +15,11 @@ MonoBehaviour:
   width: 23
   height: 16
   zoneMask: {fileID: 2800000, guid: f32dc6901896e984984d7c3600708cc4, type: 3}
-  zoneSoilType: 0
   zoneMoisture: 0.5
   zoneMoistureRetention: 1
   borderTreePool:
   - {fileID: 11400000, guid: 49138b779bf3d0b4fb2b918496337ad9, type: 2}
   - {fileID: 11400000, guid: 7dd4ecb8c8b80ed42b42def04974069f, type: 2}
-  borderSoilType: 0
   borderMoisture: 1
   seedCount: 12
   treeRequirements:
@@ -30,7 +28,7 @@ MonoBehaviour:
   - treeType: {fileID: 11400000, guid: 7dd4ecb8c8b80ed42b42def04974069f, type: 2}
     requiredMatureCount: 25
   timeLimitYears: 0
-  levelName: Level 2
+  levelName: Level 2 - Maple and Beech Forest
   levelDescription: This is a mixed forest with Maple and Beech trees. There is an
     empty patch because of a recent fire, so it's your job to help with reforestation!
   backgroundMusic: {fileID: 8300000, guid: 17e5b919bbb195745869cfa7e2901c71, type: 3}

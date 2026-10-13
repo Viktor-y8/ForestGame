@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class ToolButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
@@ -12,6 +13,9 @@ public class ToolButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     [SerializeField] private bool useOwnPosition = false;
     [SerializeField] private TMP_Text toolText;
 
+    private static Dictionary<ToolType, ToolButton> registry = new();
+    [SerializeField] private GameObject highlightOverlay;
+
     private void Awake()
     {
         if (useOwnPosition)
@@ -19,6 +23,9 @@ public class ToolButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         else
             buttonContainer = transform.parent.GetComponent<RectTransform>()
                               ?? GetComponent<RectTransform>();
+
+        registry[tool] = this;
+        if (highlightOverlay != null) highlightOverlay.SetActive(false);
     }
 
     private void Start()
@@ -30,6 +37,9 @@ public class ToolButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private void OnDestroy()
     {
         InteractionManager.OnBudgetChanged -= RefreshCountText;
+
+        if (registry.TryGetValue(tool, out var existing) && existing == this)
+            registry.Remove(tool);
     }
 
     private void RefreshCountText()
@@ -40,6 +50,12 @@ public class ToolButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             toolText.text = toolName + " - " + InteractionManager.Instance.fertilizeBudget + " / " + InteractionManager.Instance.getMaxFertilizeBudget();
         else if (tool == ToolType.Water)
             toolText.text = toolName + " - " + InteractionManager.Instance.waterBudget + " / " + InteractionManager.Instance.getMaxWaterBudget();
+    }
+
+    public static void SetHighlight(ToolType tool, bool on)
+    {
+        if (registry.TryGetValue(tool, out ToolButton button) && button.highlightOverlay != null)
+            button.highlightOverlay.SetActive(on);
     }
 
     public void OnClick()

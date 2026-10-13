@@ -13,10 +13,6 @@ public class CameraController : MonoBehaviour
     private float minX, maxX, minY, maxY;
     private bool hasBounds = false;
 
-    [SerializeField] private Image buttonImage;
-    [SerializeField] private Sprite camOnSprite;
-    [SerializeField] private Sprite camOffSprite;
-
     void Start()
     {
         screenWidth = Screen.width;
@@ -42,7 +38,6 @@ public class CameraController : MonoBehaviour
     public void setMoveCam()
     {
         moveCam = !moveCam;
-        buttonImage.sprite = moveCam ? camOnSprite : camOffSprite;
     }
 
     void Update()

@@ -163,7 +163,7 @@ public class Soil : MonoBehaviour
     private void OnMouseEnter()
     {
         if (RoundManager.Instance.Phase != GamePhase.Planning) return;
-        //!InteractionManager.Instance.hasSelectedTool() && 
+
         if (CurrentObject is Tree tree && !tree.isImmune && !isOnFire && !tree.hasPest && !tree.hasDisease)
         {
             tree.GetComponent<TreeForecastLabel>()?.Show(
@@ -171,8 +171,15 @@ public class Soil : MonoBehaviour
         }
 
         ToolType? hintTool = GetHintTool();
-        if (hintTool.HasValue && CurrentObject is Tree hintTree)
-            hintTree.GetComponent<ToolHintIcon>()?.Show(hintTool.Value);
+        if (hintTool.HasValue)
+        {
+            if (CurrentObject is Tree hintTree)
+                hintTree.GetComponent<ToolHintIcon>()?.Show(hintTool.Value);
+
+            ToolButton.SetHighlight(hintTool.Value, true);
+        }
+
+
         if (hintTool.HasValue && CurrentObject is Weed weed)
             weed.GetComponent<ToolHintIcon>()?.Show(hintTool.Value);
     }
@@ -188,6 +195,9 @@ public class Soil : MonoBehaviour
         {
             weed.GetComponent<ToolHintIcon>()?.Hide();
         }
+
+        ToolType? hintTool = GetHintTool();
+        if (hintTool.HasValue) ToolButton.SetHighlight(hintTool.Value, false);
     }
 
     public ToolType? GetHintTool()

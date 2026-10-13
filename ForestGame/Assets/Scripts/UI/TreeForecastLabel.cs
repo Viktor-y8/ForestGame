@@ -40,7 +40,7 @@ public class TreeForecastLabel : MonoBehaviour
     {
         if (!basePositionSet) RefreshPosition();
 
-        if (willDie)
+        if (willDie && endRound)
         {
             skullIcon.enabled = true;
             labelRenderer.enabled = false;

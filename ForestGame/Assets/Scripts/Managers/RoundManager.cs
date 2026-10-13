@@ -31,10 +31,11 @@ public class RoundManager : MonoBehaviour
     [Header("Disease")]
     [SerializeField] private float diseaseChance = 0.2f;
     [SerializeField] private float diseaseHealthThreshold = 0.3f;
-    [SerializeField] private float diseaseSpreadChance = 0.15f;
+    [SerializeField] private float diseaseSpreadChance = 0.35f;
 
     [Header("Pest")]
     public float pestRoundEndDamage = 0.2f;
+    [SerializeField] private float pestRoundEndSpreadChance = 0.35f;
 
     [SerializeField] private TMP_Text timeText;
 
@@ -99,6 +100,8 @@ public class RoundManager : MonoBehaviour
             if (tree.hasPest) tree.TakeDamage(pestRoundEndDamage);
             if (tree == null) continue;
 
+            if (tree.hasPest) TrySpreadPest(soil, tree);
+
             if (tree.hasDisease)
             {
                 TrySpreadDisease(soil, tree);
@@ -157,6 +160,21 @@ public class RoundManager : MonoBehaviour
             if (UnityEngine.Random.value < diseaseSpreadChance)
             {
                 neighborTree.hasDisease = true;
+                neighborTree.GetComponent<TreeOverlay>()?.Refresh();
+            }
+        }
+    }
+
+    public void TrySpreadPest(Soil source, Tree sourceTree)
+    {
+        foreach (Soil neighbor in source.grid.Adjacent(source))
+        {
+            if (neighbor?.CurrentObject is not Tree neighborTree) continue;
+            if (neighborTree.hasPest || neighborTree.hasDisease || neighbor.isOnFire || neighborTree.isImmune || neighborTree.dead) continue;
+
+            if (UnityEngine.Random.value < pestRoundEndSpreadChance)
+            {
+                neighborTree.hasPest = true;
                 neighborTree.GetComponent<TreeOverlay>()?.Refresh();
             }
         }
